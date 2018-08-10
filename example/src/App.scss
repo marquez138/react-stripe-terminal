@@ -1,0 +1,89 @@
+@import './node_modules/materialize-css/sass/components/color';
+@import './node_modules/materialize-css/sass/components/variables';
+@import './node_modules/materialize-css/sass/components/grid';
+
+$main-text-color: color('blue-grey', 'base');
+$input-shadow-color: #e6ebf1;
+$section-shadow-color: #cfd7df;
+$border-radius: 4px;
+
+.divider {
+  height: 1px;
+  overflow: hidden;
+  background-color: color('grey', 'lighten-2');
+}
+
+
+.StripePOS {
+  font-family: "Helvetica Neue", Helvetica, sans-seankrif;
+  span {
+    font-size: 18px;
+    color: $main-text-color;
+  }
+  input {
+    margin: 10px;
+    color: color('grey', 'lighten-2');
+    line-height: 18px;
+    font-size: 16px;
+    height: 18px;
+    -webkit-font-smoothing: antialiased;
+    border-radius: $border-radius;
+    border: 1px solid transparent;
+    box-shadow: 0 1px 3px 0 $input-shadow-color;
+    height: 25px;
+  }
+  input:focus {
+    box-shadow: 0 1px 3px 0 #cfd7df;
+    outline: none;
+  }
+  label {
+    margin: 5px;
+    margin-bottom: 2px;
+    display: block;
+    color: $main-text-color;
+  }
+  section {
+    box-shadow: 0 1px 3px 0 $section-shadow-color;
+    min-height: 35px;
+    border-radius: $border-radius;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+  }
+  span.FormHeader {
+    font-size: 20px;
+    color: $main-text-color;
+    margin-left: 2px;
+    margin-top: 2px;
+    display: block;
+  }
+  .btn {
+    margin: 5px;
+    margin-top: 0px;
+    border: none;
+    border-radius: $border-radius;
+    outline: none;
+    text-decoration: none;
+    color: #fff;
+    background: #32325d;
+    white-space: nowrap;
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 14px;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    text-decoration: none;
+    -webkit-transition: all 150ms ease;
+    transition: all 150ms ease;
+    margin-left: 12px;
+    margin-top: 5px;
+  }
+  .btn:hover {
+    transform: translateY(-1px);
+    background-color: #43458b;
+    box-shadow: 0 7px 14px rgba(50, 50, 93, .10), 0 3px 6px rgba(0, 0, 0, .08);
+  }
+}

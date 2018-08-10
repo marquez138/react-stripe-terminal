@@ -1,0 +1,17 @@
+{
+  "presets": [
+    ["env", {
+      "modules": false
+    }],
+    "stage-0",
+    "react"
+  ],
+  "plugins": [
+    "external-helpers",
+    ["transform-runtime", {
+      "runtimeHelpers": true,
+      "polyfill": false,
+      "regenerator": true
+    }]
+  ]
+}
