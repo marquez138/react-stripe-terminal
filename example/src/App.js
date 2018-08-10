@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import {createPosActivationToken} from './APIClient';
-import POSPayment from './POSPayment';
+import {createPosActivationToken, registerDevice, createIntent} from './APIClient';
+import POSPayment from './POSPayment'
 
 class App extends Component {
     render () {
@@ -11,7 +11,6 @@ class App extends Component {
             }}>
               <h1>Welcome to Stripe POS</h1>
               <POSPayment
-                ipAddress='192.168.2.3'
                 basketItems={[{
                   description: 'Yellow Hat',
                   totalPrice: 30000,
@@ -19,7 +18,9 @@ class App extends Component {
                   quantity: 3
                 }]}
                 taxRate={0.07}
-                activationTokenRequestHandler={createPosActivationToken} />
+                activationTokenRequestHandler={createPosActivationToken}
+                discoveryTokenRequestHandler={registerDevice}
+                paymentIntentRequestHandler={createIntent}/>
             </div>
         )
     }
