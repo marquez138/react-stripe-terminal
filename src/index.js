@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 
 function POSDevice(WrappedComponent) {
     return class extends Component {
@@ -17,11 +17,11 @@ function POSDevice(WrappedComponent) {
                 unitPrice: PropTypes.number,
                 quantity: PropTypes.number
             }))
-        };
+        }
 
         static defaultProps = {
             basketItems: []
-        };
+        }
 
         state = {
             terminal: null,
@@ -42,13 +42,13 @@ function POSDevice(WrappedComponent) {
                 return this.props.computeBasketTotals(items)
             }
             // default implementation
-            const total = items.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0);
+            const total = items.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0)
             const tax = parseFloat((total * this.props.taxRate).toFixed(2))
             return {
                 total,
                 tax,
                 balanceDue: tax + total
-            };
+            }
         }
 
         onDisconnect() {
@@ -56,7 +56,7 @@ function POSDevice(WrappedComponent) {
             this.setState(prevState => ({
                 ...this.prevState,
                 connectionStatus: 'connected'
-            }));
+            }))
         }
 
         onConnect() {
@@ -66,89 +66,102 @@ function POSDevice(WrappedComponent) {
                 connectionStatus: 'disconnected'
             }), () => {
                 console.log('updated state')
-            });
+            })
         }
 
         handleReadersDiscovered = (discoveredReaders, handleSelection) => {
-            console.log(discoveredReaders);
-            this.selectReaderHandler = handleSelection;
+            console.log(discoveredReaders)
+            this.selectReaderHandler = handleSelection
             this.setState({
-                discoveredReaders: discoveredReaders,
-            });
-            handleSelection(discoveredReaders[0]);
-        };
+                discoveredReaders: discoveredReaders
+            })
+            handleSelection(discoveredReaders[0])
+        }
 
         componentWillReceiveProps(nextProps) {
-            console.log('Current props: ', this.props);
-            console.log('Next props: ', nextProps);
+            console.log('Current props: ', this.props)
+            console.log('Next props: ', nextProps)
         }
         handleConnectionStatusChange = ev => {
-            console.log(ev);
+            console.log(ev)
             this.setState({
-              connectionStatus: ev.status,
-            });
-          };
+              connectionStatus: ev.status
+            })
+          }
         handlePaymentStatusChange = ev => {
-            console.log(ev);
+            console.log(ev)
             this.setState({
-              paymentStatus: ev.status,
-            });
-          };
+              paymentStatus: ev.status
+            })
+          }
       
         handleDisconnect = ev => {
-            console.log(ev);
+            console.log(ev)
             this.setState({
                 connectionStatus: ev.status,
-                connection: null,
-            });
-        };
+                connection: null
+            })
+        }
 
-        addBasketItem = basketItem => {
+        addBasketItem = async basketItem => {
             if (this.state.connectionStatus !== 'connected') {
                 // if we aren't connected do not touch the basket
-                return;
+                return
             }
             if (this.state.basketItems.length === 0) {
-                console.log('begin checkout');
-                this.state.terminal.beginCheckout({
-                    transactionId: 'some-id' // TODO how should we generate these?
-                });
+                console.log('begin checkout')
+                try {
+                    let result = await this.state.terminal.beginCheckout({
+                        transactionId: 'some-id' // TODO how should we generate these?
+                    })
+                    console.log('begin checkout response')
+                    console.log(result)
+                } catch (e) {
+                    console.error(e)
+                }
             }
-            const newItems = [...this.state.basketItems, basketItem];
-            const total = this.computeBasketTotals(newItems);
+            const newItems = [...this.state.basketItems, basketItem]
             this.setState({
                 basketItems: newItems,
                 totals: this.computeBasketTotals(newItems)
-            }, () => {
+            }, async () => {
                 // todo - should we have the consuming app compute the totals here
-                this.state.terminal.setBasket({
-                    basket: this.state.basketItems,
+                let result = await this.state.terminal.setBasket({
+                    basket: {
+                        lineItems: this.state.basketItems
+                    },
                     totals: this.state.totals
-                });
-            });
+                })
+                console.log('add basket result:')
+                console.log('basketItems:')
+                console.log(this.state.basketItems);
+                console.log(result)
+            })
         }
 
         removeBasketItem = index => {
-            const newItems = this.state.basketItems.filter((_, i) => i !== index);
+            const newItems = this.state.basketItems.filter((_, i) => i !== index)
             this.setState({
                 basketItems: newItems,
                 totals: this.computeBasketTotals(newItems)
             }, () => {
                 if (this.state.basketItems.length === 0) {
                     console.log('end checkout')
-                    return this.state.terminal.endCheckout();
+                    return this.state.terminal.endCheckout()
                 }
                 this.state.terminal.setBasket({
-                    basket: this.state.basketItems,
+                    basket: {
+                        lineItems: this.state.basketItems
+                    },
                     totals: this.state.totals
-                });
-            });
+                })
+            })
         }
 
         async componentDidMount() {
             if (!this.props.ipAddress) {
                 // TODO make an error state for this
-                return;
+                return
             }
             const terminal = window.StripePos.createTerminal({
                 devMode: 'CANARY',
@@ -156,29 +169,29 @@ function POSDevice(WrappedComponent) {
                 onDisconnect: this.onDisconnect,
                 onConnectionStatusChange: this.handleConnectionStatusChange,
                 onPaymentStatusChange: this.handlePaymentStatusChange,
-            });
+            })
             this.setState({
                 terminal: terminal
-            });
+            })
             const { selectedReader, error } = await terminal.discover(
             {
                 method: 'ip',
                 ip: this.props.ipAddress,
             },
                 this.handleReadersDiscovered
-            );
+            )
             const {
                 connectionInfo,
                 error: connectionError,
-            } = await terminal.connect(selectedReader);
+            } = await terminal.connect(selectedReader)
 
             // TODO Make some other log call here
-            console.log(connectionInfo);
+            console.log(connectionInfo)
 
             if (error) {
-                this.setState({ connectionStatus: 'error' });
-                this.setState({ error });
-                return;
+                this.setState({ connectionStatus: 'error' })
+                this.setState({ error })
+                return
             }
 
             if (this.state.basketItems.length) {
@@ -187,7 +200,9 @@ function POSDevice(WrappedComponent) {
                     transactionId: 'some-id'
                 })
                 terminal.setBasket({
-                    basket: this.state.basketItems,
+                    basket: {
+                        lineItems: this.state.basketItems
+                    },
                     totals: this.computeBasketTotals(this.state.basketItems)
                 })
             }
@@ -204,9 +219,9 @@ function POSDevice(WrappedComponent) {
             // Wraps the input component in a container adding POS specifics
             // to `this.props.stripePos`
             return <WrappedComponent
-                {...props} />;
+                {...props} />
         }
     }
 }
 
-export default POSDevice;
+export default POSDevice
