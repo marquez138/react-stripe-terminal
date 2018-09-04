@@ -20,9 +20,15 @@ $border-radius: 4px;
     font-size: 18px;
     color: $main-text-color;
   }
-  input {
+  .right {
+    float: right
+  }
+  .reader-name {
+    font-size: 1.2rem
+  }
+  .box {
     margin: 10px;
-    color: color('grey', 'lighten-2');
+    color: color('grey', 'lighten-1');
     line-height: 18px;
     font-size: 16px;
     height: 18px;
@@ -30,7 +36,20 @@ $border-radius: 4px;
     border-radius: $border-radius;
     border: 1px solid transparent;
     box-shadow: 0 1px 3px 0 $input-shadow-color;
-    height: 25px;
+    height: auto;
+  }
+  .item-list {
+    max-height: 300px;
+    overflow-y: auto
+  }
+  .list-item {
+    @extend .box;
+    padding-left: 8px;
+    font-weight: 500;
+  }
+  input {
+    @extend .box;
+    min-height: 25px;
   }
   input:focus {
     box-shadow: 0 1px 3px 0 #cfd7df;
@@ -86,4 +105,5 @@ $border-radius: 4px;
     background-color: #43458b;
     box-shadow: 0 7px 14px rgba(50, 50, 93, .10), 0 3px 6px rgba(0, 0, 0, .08);
   }
+
 }

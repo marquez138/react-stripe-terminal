@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import ReaderDiscover from './modules/reader-discover'
+import ConnectionManager from './modules/connection-manager'
+import Basket from './modules/basket'
 
 function POSDevice(WrappedComponent) {
     return class extends Component {
@@ -40,167 +43,7 @@ function POSDevice(WrappedComponent) {
             }
         }
 
-        discoverReaders = async discoveryToken => {
-            if (discoveryToken) {
-                await this.props.discoveryTokenRequestHandler(discoveryToken)
-            }
-
-            const terminal = window.StripePos.createTerminal({
-                devMode: 'CANARY',
-                onActivationTokenRequest: this.props.activationTokenRequestHandler,
-                onDisconnect: this.onDisconnect,
-                onConnectionStatusChange: this.handleConnectionStatusChange,
-                onPaymentStatusChange: this.handlePaymentStatusChange
-            })
-            this.setState({
-                terminal: terminal
-            })
-            const { selectedReader, error } = await terminal.discover(
-            {
-                method: this.props.ipAddress ? 'ip' : 'registered',
-                ip: this.props.ipAddress
-            },
-                this.handleReadersDiscovered
-            )
-            if (!selectedReader) {
-                console.error('No detected reader')
-                this.setState({ connectionStatus: 'error' })
-                this.setState({ error })
-                return
-            }
-            const {
-                connectionInfo,
-                error: connectionError
-            } = await terminal.connect(selectedReader)
-
-            // TODO Make some other log call here
-            console.log(connectionInfo)
-
-            if (error) {
-                console.log(error);
-                this.setState({ connectionStatus: 'error' })
-                this.setState({ error })
-                return
-            }
-            console.log('successful connection');
-            if (this.state.basketItems.length) {
-                console.log('begin checkout')
-                terminal.beginCheckout({
-                    transactionId: 'some-id'
-                })
-                terminal.setBasket({
-                    basket: {
-                        lineItems: this.state.basketItems
-                    },
-                    totals: this.computeBasketTotals(this.state.basketItems)
-                })
-            }
-        }
-
-        computeBasketTotals = (items) => {
-            if (this.props.computeBasketTotals) {
-                return this.props.computeBasketTotals(items)
-            }
-            // default implementation
-            const total = items.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0)
-            const tax = parseFloat((total * this.props.taxRate).toFixed(2))
-            return {
-                total,
-                tax,
-                balanceDue: tax + total
-            }
-        }
-
-        onDisconnect() {
-            console.log('DISCONNECTED!')
-            this.setState(prevState => ({
-                ...this.prevState,
-                connectionStatus: 'connected'
-            }))
-        }
-
-        onConnect() {
-            console.log('CONNECTED!')
-            this.setState(prevState => ({
-                ...this.prevState,
-                connectionStatus: 'disconnected'
-            }), () => {
-                console.log('updated state')
-            })
-        }
-
-        handleReadersDiscovered = (discoveredReaders, handleSelection) => {
-            console.log(discoveredReaders)
-            this.selectReaderHandler = handleSelection
-            console.log('setting discovered readers:')
-            console.log(discoveredReaders);
-            this.setState({
-                discoveredReaders: discoveredReaders
-            })
-            handleSelection(discoveredReaders[0])
-        }
-
-        componentWillReceiveProps(nextProps) {
-            console.log('Current props: ', this.props)
-            console.log('Next props: ', nextProps)
-        }
-        handleConnectionStatusChange = ev => {
-            console.log(ev)
-            this.setState({
-              connectionStatus: ev.status
-            })
-          }
-        handlePaymentStatusChange = ev => {
-            console.log(ev)
-            this.setState({
-              paymentStatus: ev.status
-            })
-          }
-      
-        handleDisconnect = ev => {
-            console.log(ev)
-            this.setState({
-                connectionStatus: ev.status,
-                connection: null
-            })
-        }
-
-        addBasketItem = async basketItem => {
-            if (this.state.connectionStatus !== 'connected') {
-                // if we aren't connected do not touch the basket
-                return
-            }
-            if (this.state.basketItems.length === 0) {
-                console.log('begin checkout')
-                try {
-                    let result = await this.state.terminal.beginCheckout({
-                        transactionId: 'some-id' // TODO how should we generate these?
-                    })
-                    console.log('begin checkout response')
-                    console.log(result)
-                } catch (e) {
-                    console.error(e)
-                }
-            }
-            const newItems = [...this.state.basketItems, basketItem]
-            this.setState({
-                basketItems: newItems,
-                totals: this.computeBasketTotals(newItems)
-            }, async () => {
-                // todo - should we have the consuming app compute the totals here
-                let result = await this.state.terminal.setBasket({
-                    basket: {
-                        lineItems: this.state.basketItems
-                    },
-                    totals: this.state.totals
-                })
-                console.log('add basket result:')
-                console.log('basketItems:')
-                console.log(this.state.basketItems);
-                console.log(result)
-            })
-        }
-
+        // TODO do we want to handel the actual payment creation? :-/
         createPayment = async (amount, description) => {
             if (this.state.connectionStatus !== 'connected') {
                 // if we aren't connected do not touch the basket
@@ -222,58 +65,43 @@ function POSDevice(WrappedComponent) {
                 // printReceipt(paymentIntent.source.emv_receipt_data);
                 console.log('TODO capture payment intent!')
 
-                await this.clearBasket()
+                await this._basket.clearBasket()
             }
         }
 
-        clearBasket = async () => {
-            if (this.state.connectionStatus !== 'connected') {
-                // if we aren't connected do not touch the basket
-                return
+        async connectToReader (reader) {
+            await this._connectionManager.connectToReader(reader)
+
+            if (this.state.basketItems.length) {
+                await this._basket.setBasket()
             }
-            const newItems = []
-            this.setState({
-                basketItems: [],
-                totals: this.computeBasketTotals(newItems)
-            }, () => {
-                this.state.terminal.endCheckout()
+        }
+
+        componentDidMount() {
+            this._connectionManager = new ConnectionManager({component: this})
+            const terminal = window.StripePos.createTerminal({
+                // devMode: 'CANARY',
+                onGetActivationToken: this.props.activationTokenRequestHandler,
+                onReaderDisconnect: this._connectionManager.onDisconnect,
+                onConnectionStatusChange: this._connectionManager.handleConnectionStatusChange,
+                onPaymentStatusChange: this._connectionManager.handlePaymentStatusChange,
+                onUnexpectedReaderDisconnect: this._connectionManager.handleUnexpectedReaderDisconnect
             })
-        }
-
-        removeBasketItem = index => {
-            if (this.state.connectionStatus !== 'connected') {
-                // if we aren't connected do not touch the basket
-                return
-            }
-            const newItems = this.state.basketItems.filter((_, i) => i !== index)
-            this.setState({
-                basketItems: newItems,
-                totals: this.computeBasketTotals(newItems)
-            }, () => {
-                if (this.state.basketItems.length === 0) {
-                    console.log('end checkout')
-                    return this.state.terminal.endCheckout()
-                }
-                this.state.terminal.setBasket({
-                    basket: {
-                        lineItems: this.state.basketItems
-                    },
-                    totals: this.state.totals
-                })
-            })
-        }
-
-        async componentDidMount() {
-            this.discoverReaders()
+            
+            this._basket = new Basket({terminal, component: this})
+            this.setState({terminal})
+            this._readerDiscovery = new ReaderDiscover({terminal, component: this})
+            this._readerDiscovery.discoverReaders({})
         }
 
         render() {
             const props = {...Object.assign({}, this.props, {
                 stripePos: {
                     ...this.state,
-                    addBasketItem: basketItem => this.addBasketItem(basketItem),
-                    removeBasketItem: index => this.removeBasketItem(index),
-                    discoverReaders: discoveryToken => this.discoverReaders(discoveryToken),
+                    addBasketItem: basketItem => this._basket.addBasketItem(basketItem),
+                    connectToReader: reader => this.connectToReader(reader),
+                    removeBasketItem: index => this._basket.removeBasketItem(index),
+                    discoverReaders: discoveryToken => this._readerDiscovery.discoverReaders({discoveryToken}),
                     createPayment: this.createPayment
                 }
             })}
