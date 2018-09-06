@@ -13,7 +13,7 @@ npm install --save react-stripe-pos
 ## Demo Application
 
 ![Demo Gif](example/stripe-pos-demo.gif)
-
+*A demo*
 
 Run the example application for this component by doing:
 
