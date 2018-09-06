@@ -3,18 +3,29 @@
 @import './node_modules/materialize-css/sass/components/grid';
 
 $main-text-color: color('blue-grey', 'base');
+$secondary-text-color: color('grey', 'lighten-1');
 $input-shadow-color: #e6ebf1;
 $section-shadow-color: #cfd7df;
 $border-radius: 4px;
-
-.divider {
-  height: 1px;
-  overflow: hidden;
-  background-color: color('grey', 'lighten-2');
-}
-
+$basket-height: 300px;
 
 .StripePOS {
+  // transitions - trusty SO reference https://stackoverflow.com/questions/11660710/css-transition-fade-in
+  .fade-in {
+    opacity: 1;
+    animation-name: fadeInOpacity;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: .25s;
+  }
+  @keyframes fadeInOpacity {
+    0% {
+      opacity: 0
+    }
+    100% {
+      opacity: 1
+    }
+  }
   font-family: "Helvetica Neue", Helvetica, sans-seankrif;
   span {
     font-size: 18px;
@@ -23,12 +34,17 @@ $border-radius: 4px;
   .right {
     float: right
   }
+  .center {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
   .reader-name {
     font-size: 1.2rem
   }
   .box {
     margin: 10px;
-    color: color('grey', 'lighten-1');
+    color: $secondary-text-color;
     line-height: 18px;
     font-size: 16px;
     height: 18px;
@@ -39,13 +55,20 @@ $border-radius: 4px;
     height: auto;
   }
   .item-list {
-    max-height: 300px;
-    overflow-y: auto
-  }
-  .list-item {
-    @extend .box;
-    padding-left: 8px;
-    font-weight: 500;
+    height: $basket-height;
+    overflow-y: auto;
+    .empty-basket-placeholder {
+      @extend .center;
+      position: relative;
+      top: $basket-height / 3;
+      color: $secondary-text-color;
+    }
+    .list-item {
+      @extend .box;
+      @extend .fade-in;
+      padding-left: 8px;
+      font-weight: 500;
+    }
   }
   input {
     @extend .box;
@@ -105,5 +128,12 @@ $border-radius: 4px;
     background-color: #43458b;
     box-shadow: 0 7px 14px rgba(50, 50, 93, .10), 0 3px 6px rgba(0, 0, 0, .08);
   }
-
+  .error-box {
+    @extend .box;
+    @extend .row;
+    padding-left: 5px;
+    padding-right: 5px;
+    color: white;
+    background-color: color('red', 'lighten-2')
+  }
 }

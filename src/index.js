@@ -1,7 +1,9 @@
+/* globals StripePos */
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import ReaderDiscover from './modules/reader-discover'
 import ConnectionManager from './modules/connection-manager'
+import PaymentCreator from './modules/payment-creator'
 import Basket from './modules/basket'
 
 function POSDevice(WrappedComponent) {
@@ -43,32 +45,6 @@ function POSDevice(WrappedComponent) {
             }
         }
 
-        // TODO do we want to handel the actual payment creation? :-/
-        createPayment = async (amount, description) => {
-            if (this.state.connectionStatus !== 'connected') {
-                // if we aren't connected do not touch the basket
-                return
-            }
-            let result = await this.props.paymentIntentRequestHandler(amount, description)
-            console.log('payment intent:')
-            console.log(result)
-            let {paymentIntent, error} = await this.state.terminal.attachSource(result)
-            console.log('source attached')          
-            let {confirmedPaymentIntent, error2} = await this.state.terminal.confirmPaymentIntent(paymentIntent)
-            console.log('confirmed intent')
-            console.log(confirmedPaymentIntent);
-            if (error2) {
-                alert('Confirm failed: ${error.message}');
-            } else if (paymentIntent)  {
-                // Notify your backend to capture the payment
-                // completePayment(paymentIntent.id);
-                // printReceipt(paymentIntent.source.emv_receipt_data);
-                console.log('TODO capture payment intent!')
-
-                await this._basket.clearBasket()
-            }
-        }
-
         async connectToReader (reader) {
             await this._connectionManager.connectToReader(reader)
 
@@ -79,7 +55,8 @@ function POSDevice(WrappedComponent) {
 
         componentDidMount() {
             this._connectionManager = new ConnectionManager({component: this})
-            const terminal = window.StripePos.createTerminal({
+
+            const terminal = StripePos.createTerminal({
                 // devMode: 'CANARY',
                 onGetActivationToken: this.props.activationTokenRequestHandler,
                 onReaderDisconnect: this._connectionManager.onDisconnect,
@@ -87,8 +64,9 @@ function POSDevice(WrappedComponent) {
                 onPaymentStatusChange: this._connectionManager.handlePaymentStatusChange,
                 onUnexpectedReaderDisconnect: this._connectionManager.handleUnexpectedReaderDisconnect
             })
-            
+            this._connectionManager.terminal = terminal
             this._basket = new Basket({terminal, component: this})
+            this._paymentCreator = new PaymentCreator({terminal, component: this})
             this.setState({terminal})
             this._readerDiscovery = new ReaderDiscover({terminal, component: this})
             this._readerDiscovery.discoverReaders({})
@@ -100,9 +78,10 @@ function POSDevice(WrappedComponent) {
                     ...this.state,
                     addBasketItem: basketItem => this._basket.addBasketItem(basketItem),
                     connectToReader: reader => this.connectToReader(reader),
+                    disconnectReader: reader => this._connectionManager.disconnectReader(), 
                     removeBasketItem: index => this._basket.removeBasketItem(index),
                     discoverReaders: discoveryToken => this._readerDiscovery.discoverReaders({discoveryToken}),
-                    createPayment: this.createPayment
+                    createPayment: options => this._paymentCreator.createPayment({...options})
                 }
             })}
             // Wraps the input component in a container adding POS specifics

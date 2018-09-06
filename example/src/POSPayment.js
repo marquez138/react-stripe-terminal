@@ -3,18 +3,19 @@ import POSDevice from 'react-stripe-pos';
 
 class POSPayment extends Component {
 
-    connectionDialog () {
+    renderConnectionDialog () {
         return (
             <div>
                 {this.props.stripePos.discoveredReaders.length ?
                     <div className="row">
                         <h2>Connect to a Device</h2>
                         {this.props.stripePos.discoveredReaders.map(reader =>
-                            <div className='row box' key={reader.ip_address}>
-                                <div className="col s3 reader-name">
-                                    <p>{reader.ip_address}</p>
+                            <div className='row box' key={reader.paired_device_id}>
+                                <div className="col s8 reader-name">
+                                    <strong>{reader.ip_address}</strong>
+                                    <p>Device ID: {reader.paired_device_id}</p>
                                 </div>
-                                <div className="col s9">
+                                <div className="col s4">
                                     <button className='btn right' onClick={() => this.props.stripePos.connectToReader(reader)}>Connect</button>
                                 </div>
                             </div>)
@@ -28,24 +29,40 @@ class POSPayment extends Component {
         )
     }
 
-    discoveryDialog () {
+    renderBasketItems () {
+        return <div className='row item-list'>
+            {this.props.stripePos.basketItems.length ? this.props.stripePos.basketItems.map((item, index) =>
+                <div className='list-item'>
+                    <div className='row'>
+                        <div class='col s8'>
+                            <strong>Description: {item.description}</strong>
+                            <p>Price: ${(item.unitPrice / 100).toFixed(2)} each</p>
+                            <p>Amount: ${(item.totalPrice / 100).toFixed(2)}</p>
+                        </div>
+                        <div class='col s4'>
+                            <button disabled={this.props.stripePos.connectionStatus !== 'connected'} className='btn red right' onClick={() => this.props.stripePos.removeBasketItem(index)}>Remove</button>
+                        </div>
+                    </div>
+                </div>)
+            : <h3 className='empty-basket-placeholder'>Basket Empty</h3>}
+        </div>
+    }
 
+    renderError () {
+        if (!this.props.stripePos.error) {
+            return;
+        }
+        return  <div class="error-box">
+                    <p>{this.props.stripePos.error.message}</p>
+                </div>
     }
 
     render () {
         let component
-        if (this.props.stripePos.connection && !this.props.stripePos.error) {
+        if (this.props.stripePos.connection) {
             component = <div>
                 <h1>Checkout Basket</h1>
-                <div className='row item-list'>
-                    {this.props.stripePos.basketItems.map(item =>
-                        <div className='list-item'>
-                            <p>Description:{item.description}</p>
-                            <p>Price: ${(item.unitPrice / 100).toFixed(2)} each</p>
-                            <p>Amount: ${(item.totalPrice / 100).toFixed(2)}</p>
-                        </div>)
-                    }
-                </div>
+                {this.renderBasketItems()}
                 <div className='row'>
                     <div className='col s6 right'>
                         <p>Sub Total: ${(this.props.stripePos.totals.total / 100).toFixed(2)}</p>
@@ -62,17 +79,22 @@ class POSPayment extends Component {
                             })}>Add Item</button>
                         </div>
                         <div className="row">
-                            <button disabled={this.props.stripePos.connectionStatus !== 'connected'} className='btn red' onClick={() => this.props.stripePos.removeBasketItem(0)}>Remove Item</button>
-                        </div>
-                        <div className="row">
-                            <button disabled={this.props.stripePos.connectionStatus !== 'connected'} onClick={() => this.props.stripePos.createPayment(this.props.stripePos.totals.balanceDue, 'Purchase')} className='btn'>Create ${(this.props.stripePos.totals.balanceDue / 100).toFixed(2)} Charge</button>
+                            <button disabled={this.props.stripePos.connectionStatus !== 'connected'} onClick={() => this.props.stripePos.createPayment({
+                                amount: this.props.stripePos.totals.balanceDue,
+                                description: 'Purchase'
+                            })} className='btn'>Create ${(this.props.stripePos.totals.balanceDue / 100).toFixed(2)} Charge</button>
                         </div>
                     </div>
                 </div>
+                {this.renderError()}
                 <div className='row'>
-                    
-                    <h3>Device Status: {this.props.stripePos.connectionStatus}</h3>
-                    {this.props.stripePos.connectionStatus === 'connected' ? <h3>Payment Status: {this.props.stripePos.paymentStatus}</h3> : null}
+                    <div className='col s8'>
+                        <h3>Device Status: {this.props.stripePos.connectionStatus}</h3>
+                        {this.props.stripePos.connectionStatus === 'connected' ? <h3>Payment Status: {this.props.stripePos.paymentStatus}</h3> : null}
+                    </div>
+                    <div className='col s4'>
+                        <button disabled={!this.props.stripePos.connection} className='btn red right' onClick={() => this.props.stripePos.disconnectReader()}>Disconnect</button>
+                    </div>
                 </div>
             </div>
         } else if (this.props.stripePos.connecting) {
@@ -83,7 +105,7 @@ class POSPayment extends Component {
                 </div>
             </div>
         } else {
-            component = this.connectionDialog()
+            component = this.renderConnectionDialog()
         }
         return component
     }
