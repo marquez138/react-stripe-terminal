@@ -25,9 +25,9 @@ class ConnectionManager {
             connection: null
         })
     }
-    onConnect() {
+    onConnect(ev) {
         this._component.setState({
-            connectionStatus: 'connected'
+            connectionStatus: ev.status
         })
     }
     async onDisconnect(ev) {

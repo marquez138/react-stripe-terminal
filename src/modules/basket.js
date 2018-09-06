@@ -19,6 +19,7 @@ class Basket {
     }
     async setBasket () {
         this._component.state.terminal.beginCheckout({
+            // TODO figure out experience for client app to provide unique basket ID
             transactionId: 'some-id'
         })
         this._component.state.terminal.setBasket({
@@ -50,7 +51,7 @@ class Basket {
             basketItems: newItems,
             totals: this.computeBasketTotals(newItems)
         }, async () => {
-            // todo - should we have the consuming app compute the totals here?
+            // TODO - The API docs are missing how to handle an errors here
             let result = await this._terminal.setBasket({
                 basket: {
                     lineItems: this._component.state.basketItems
@@ -69,7 +70,7 @@ class Basket {
             basketItems: [],
             totals: this.computeBasketTotals(newItems)
         })
-        return await this._terminal.endCheckout()
+        await this._terminal.endCheckout()
     }
     removeBasketItem = index => {
         if (this._component.state.connectionStatus !== 'connected') {
