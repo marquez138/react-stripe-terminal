@@ -9,7 +9,7 @@ class App extends Component {
               margin: 'auto',
               width: '30%'
             }}>
-              <h1>Welcome to Stripe POS</h1>
+              <h1>Welcome to Stripe Present</h1>
               <POSPayment
                 basketItems={[{
                   description: 'Yellow Hat',

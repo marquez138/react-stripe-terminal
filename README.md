@@ -10,37 +10,54 @@
 npm install --save react-stripe-pos
 ```
 
+## Demo Application
+
+![Demo Gif](example/stripe-pos-demo.gif)
+
+
+Run the example application for this component by doing:
+
+```
+cd ./example
+yarn start
+```
+
 ## Usage
 
-Create a Component for your POS Shopping Basket, passing along `taxRate`, `ipAddress` of the POS device and the `activationTokenRequestHandler` to handle fetching an activation token.
-
+Example Usage:
 ```jsx
 import React, { Component } from 'react'
-
-import POSDevice from 'react-stripe-pos'
+import MyPOSComponent from './MyPOSComponent'
 
 class App extends Component {
-  render () {
-    return (
-      <div className="StripePOS" style={{
-        margin: 'auto',
-        width: '30%'
-      }}>
-        <h1>Welcome to Stripe POS</h1>
-        <POSPayment
-          ipAddress='192.168.2.2'
-          taxRate={0.07}
-          activationTokenRequestHandler={createPosActivationToken} />
-      </div>
-    )
-  }
+    render () {
+        return (
+            <div className="StripePOS" style={{
+              margin: 'auto',
+              width: '30%'
+            }}>
+              <h1>Welcome to Stripe Present</h1>
+              <MyPOSComponent
+                basketItems={[{
+                  description: 'Yellow Hat',
+                  totalPrice: 30000,
+                  unitPrice: 10000,
+                  quantity: 3
+                }]}
+                taxRate={0.07}
+                activationTokenRequestHandler={createPosActivationToken}
+                discoveryTokenRequestHandler={registerDevice}
+                paymentIntentRequestHandler={createIntent}/>
+            </div>
+        )
+    }
 }
 
 export default App
 
 ```
 
-Then use the POSDevice High-Order-Component to display your shopping basked. The device will automatically updated with changes to the basket.
+In your `MyPOSComponent` component, wrap it with the `POSDevice` react high-order-component (HOC):
 
 ```jsx
 
@@ -83,6 +100,25 @@ class POSPayment extends Component {
 
 export default POSDevice(POSPayment)
 ```
+
+Your component will be exposed a series of Stripe POS-specific properties such as `props.stripePos.connectionStatus` which you can render.
+
+### Request Handlers
+
+This component requires you to implement 3 request handlers to call your backend API:
+
+- async function registerDevice(pairingCode) 
+- async function createPosActivationToken(posDeviceId)
+- async function createIntent(amount, description)
+
+TODO - Add more details on the signatures required of these handlers.
+
+
+# Development
+
+## Running Tests
+
+Running Tests - TODO
 
 ## License
 
