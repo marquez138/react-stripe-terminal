@@ -80,7 +80,7 @@ class POSPayment extends Component {
             <p>Total: ${this.props.stripePos.totals.balanceDue.toFixed(2)}</p>
         </div>
         <div className="row">
-            <div class="col s6">
+            <div className="col s6">
                 <button disabled={this.props.stripePos.connectionStatus !== 'connected'} className="btn" onClick={() => this.props.stripePos.addBasketItem({
                     description: 'Silver Hat',
                     totalPrice: 20.00,
@@ -88,7 +88,7 @@ class POSPayment extends Component {
                     quantity: 2
                 })}>Add Item</button>
             </div>
-            <div class="col s6">
+            <div className="col s6">
                 <button disabled={this.props.stripePos.connectionStatus !== 'connected'} className="btn">Create ${this.props.stripePos.totals.balanceDue} Charge</button>
             </div>
             <h3>Device Status: {this.props.stripePos.connectionStatus}</h3>

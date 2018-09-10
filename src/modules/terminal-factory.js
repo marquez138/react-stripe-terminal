@@ -84,6 +84,16 @@ class TerminalWrapper {
         return result
     }
 
+    async attachSource(intent) {
+        const result = await this._terminal.attachSource(intent)
+        return result
+    }
+
+    async confirmPaymentIntent(attachedIntent) {
+        const result = await this._terminal.confirmPaymentIntent(attachedIntent)
+        return result
+    }
+
     /** END POS SDK WRAPPERS */
 }
 
