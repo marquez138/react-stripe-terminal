@@ -53,7 +53,7 @@ class POSPayment extends Component {
         if (!this.props.stripePos.error) {
             return;
         }
-        return  <div class="error-box">
+        return  <div className="error-box">
                     <p>{this.props.stripePos.error.message}</p>
                 </div>
     }
