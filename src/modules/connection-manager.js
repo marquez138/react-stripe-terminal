@@ -43,7 +43,6 @@ class ConnectionManager {
                 discoveredReaders: []
             })
         }
-        console.log(ev)
         this._component.setState({
             connectionStatus: ev.status
         })
@@ -52,7 +51,6 @@ class ConnectionManager {
         this.onDisconnect(ev)
     }
     handlePaymentStatusChange = ev => {
-        console.log(ev)
         this._component.setState({
             paymentStatus: ev.status
         })

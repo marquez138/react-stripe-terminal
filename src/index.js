@@ -1,6 +1,7 @@
 /* globals StripePos */
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import TerminalFactory from './modules/terminal-factory'
 import ReaderDiscover from './modules/reader-discover'
 import ConnectionManager from './modules/connection-manager'
 import PaymentCreator from './modules/payment-creator'
@@ -56,7 +57,7 @@ function POSDevice(WrappedComponent) {
         componentDidMount() {
             this._connectionManager = new ConnectionManager({component: this})
 
-            const terminal = StripePos.createTerminal({
+            const terminal = TerminalFactory.GetOrCreateTerminal({
                 // devMode: 'CANARY',
                 onGetActivationToken: this.props.activationTokenRequestHandler,
                 onReaderDisconnect: this._connectionManager.onDisconnect,
