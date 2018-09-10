@@ -25,6 +25,7 @@ class POSPayment extends Component {
                 <h3>Discover a New Device</h3>
                 <input type='text' onChange={event => this.setState({discoveryToken: event.target.value})} />
                 <button className='btn' onClick={() => this.props.stripePos.discoverReaders(this.state.discoveryToken)}>Discover</button>
+                {this.renderError()}
             </div>
         )
     }
@@ -32,14 +33,14 @@ class POSPayment extends Component {
     renderBasketItems () {
         return <div className='row item-list'>
             {this.props.stripePos.basketItems.length ? this.props.stripePos.basketItems.map((item, index) =>
-                <div className='list-item'>
+                <div className='list-item' key={`stripe-pos-item-${index}`}>
                     <div className='row'>
-                        <div class='col s8'>
+                        <div className='col s8'>
                             <strong>Description: {item.description}</strong>
                             <p>Price: ${(item.unitPrice / 100).toFixed(2)} each</p>
                             <p>Amount: ${(item.totalPrice / 100).toFixed(2)}</p>
                         </div>
-                        <div class='col s4'>
+                        <div className='col s4'>
                             <button disabled={this.props.stripePos.connectionStatus !== 'connected'} className='btn red right' onClick={() => this.props.stripePos.removeBasketItem(index)}>Remove</button>
                         </div>
                     </div>
@@ -98,7 +99,7 @@ class POSPayment extends Component {
                 </div>
             </div>
         } else if (this.props.stripePos.connecting) {
-            // show a preloader
+            // TODO show a (real) pre-loader
             component = <div>
                 <div className='preloader'>
                     Connecting...

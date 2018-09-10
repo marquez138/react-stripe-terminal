@@ -1,4 +1,5 @@
 import assert from 'assert'
+import TestSetup from '../helpers/test-setup'
 
 class StripePos {
     constructor () {
@@ -46,7 +47,7 @@ class Terminal {
         this._unexpectedDisconnect = _unexpectedDisconnect
     }
     async discoverReaders() {
-        await new Promise(resolve => resolve())
+        await TestSetup.FakeAsync()
         return [{
             ip_address: '192.168.1.1',
             paired_device_id: 'pos-1234'
@@ -61,10 +62,10 @@ class Terminal {
         if (this._connectedReader) {
             throw new Error('An Active connection already exists')
         }
-        await new Promise(resolve => resolve())
+        await TestSetup.FakeAsync()
         this._onConnectionStatusChange({status: 'connecting'})
         this._connectedReader = discoveredReader
-        await new Promise(resolve => this._onUnexpectedReaderDisconnect({error: 'Reader disconnected'}))
+        await new Promise(resolve => resolve(this._onUnexpectedReaderDisconnect({error: 'Reader disconnected'})))
         return {
             reader: discoveredReader
         }
@@ -73,13 +74,13 @@ class Terminal {
         if (!this._connectedReader) {
             throw new Error('Must have an active connection to disconnect')
         }
-        await new Promise(resolve => resolve())
+        await TestSetup.FakeAsync()
         this._connectedReader = null
         this._onDisconnect()
         this._onConnectionStatusChange({status: 'not_connected'})
     }
     async beginCheckout() {
-        await new Promise(resolve => resolve())
+        await TestSetup.FakeAsync()
     }
 }
 
