@@ -1,6 +1,8 @@
 @import './node_modules/materialize-css/sass/components/color';
 @import './node_modules/materialize-css/sass/components/variables';
 @import './node_modules/materialize-css/sass/components/grid';
+// Temporary
+@import './node_modules/materialize-css/sass/components/icons-material-design';
 
 $main-text-color: color('blue-grey', 'base');
 $secondary-text-color: color('grey', 'lighten-1');
@@ -10,15 +12,19 @@ $border-radius: 4px;
 $basket-height: 300px;
 
 .StripePOS {
+  .EventLog {
+    overflow-y: auto;
+    max-height: ($basket-height + 100px)
+  }
   // transitions - trusty SO reference https://stackoverflow.com/questions/11660710/css-transition-fade-in
   .fade-in {
     opacity: 1;
-    animation-name: fadeInOpacity;
+    animation-name: fade-in-opacity;
     animation-iteration-count: 1;
     animation-timing-function: ease-in;
     animation-duration: .25s;
   }
-  @keyframes fadeInOpacity {
+  @keyframes fade-in-opacity {
     0% {
       opacity: 0
     }

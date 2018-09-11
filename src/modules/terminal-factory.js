@@ -1,24 +1,42 @@
 /* globals StripePos */
-
 /**
  * TerminalWrapper wraps the terminal and allows for users of this module to
  * log the output of requests to and from the Stripe SDK and output the github content
  */
-class TerminalWrapper {
+class Terminal {
     constructor({
         onGetActivationToken,
         onReaderDisconnect,
         onConnectionStatusChange,
         onPaymentStatusChange,
-        onUnexpectedReaderDisconnect
+        onUnexpectedReaderDisconnect,
+        aquarium
     }) {
-        this._terminal = StripePos.createTerminal({
-            onGetActivationToken: TerminalWrapper.OnGetActivationTokenWrapper(onGetActivationToken),
-            onReaderDisconnect: TerminalWrapper.onReaderDisconnectWrapper(onReaderDisconnect),
-            onConnectionStatusChange: TerminalWrapper.OnConnectionStatusChangeWrapper(onConnectionStatusChange),
-            onPaymentStatusChange: TerminalWrapper.OnPaymentStatusChangeWrapper(onPaymentStatusChange),
-            onUnexpectedReaderDisconnect: TerminalWrapper.OnUnexpectedReaderDisconnectWrapper(onUnexpectedReaderDisconnect)
-        })
+        this._aquarium = aquarium
+
+        // Wrap our instance methods for tracing
+        if (this._aquarium) {
+            let instanceMethodNames = Object.getOwnPropertyNames(Object.getPrototypeOf(this))
+            for (let instanceMethodName of instanceMethodNames) {
+                this[instanceMethodName] = this._aquarium.watchAction(this[instanceMethodName])
+            }
+            // wrap the handlers for tracing as well
+            this._terminal = StripePos.createTerminal({
+                onGetActivationToken: this._aquarium.watchAction(this.onGetActivationToken(onGetActivationToken), 'output'),
+                onReaderDisconnect: this._aquarium.watchAction(this.onReaderDisconnect(onReaderDisconnect), 'output'),
+                onConnectionStatusChange: this._aquarium.watchAction(this.onConnectionStatusChange(onConnectionStatusChange), 'output'),
+                onPaymentStatusChange: this._aquarium.watchAction(this.onPaymentStatusChange(onPaymentStatusChange), 'output'),
+                onUnexpectedReaderDisconnect: this._aquarium.watchAction(this.onUnexpectedReaderDisconnect(onUnexpectedReaderDisconnect), 'output')
+            })
+        } else {
+            this._terminal = StripePos.createTerminal({
+                onGetActivationToken: Terminal.OnGetActivationToken(onGetActivationToken),
+                onReaderDisconnect: Terminal.onReaderDisconnect(onReaderDisconnect),
+                onConnectionStatusChange: Terminal.OnConnectionStatusChange(onConnectionStatusChange),
+                onPaymentStatusChange: Terminal.OnPaymentStatusChange(onPaymentStatusChange),
+                onUnexpectedReaderDisconnect: Terminal.OnUnexpectedReaderDisconnect(onUnexpectedReaderDisconnect)
+            })
+        }
     }
     /**
      * The following static methods are wrappers for the the event handlers coming out of the
@@ -27,23 +45,23 @@ class TerminalWrapper {
      * handlers is explicitly named the ame exact name as the named parameter of the handler
      * expected by the `createTerminal` factory method
      */
-    static OnGetActivationTokenWrapper (handler) {
+    onGetActivationToken (handler) {
         let onGetActivationToken = posDeviceId => handler(posDeviceId)
         return onGetActivationToken
     }
-    static onReaderDisconnectWrapper (handler) {
+    onReaderDisconnect (handler) {
         let onReaderDisconnect = event => handler(event)
         return onReaderDisconnect
     }
-    static OnConnectionStatusChangeWrapper (handler) {
+    onConnectionStatusChange (handler) {
         let onConnectionStatusChange = (event) => handler(event)
         return onConnectionStatusChange
     }
-    static OnPaymentStatusChangeWrapper (handler) {
+    onPaymentStatusChange (handler) {
         let onPaymentStatusChange = (event) => handler(event)
         return onPaymentStatusChange
     }
-    static OnUnexpectedReaderDisconnectWrapper (handler) {
+    onUnexpectedReaderDisconnect (handler) {
         let onUnexpectedReaderDisconnect = (event) => handler(event)
         return onUnexpectedReaderDisconnect
     }
@@ -64,7 +82,7 @@ class TerminalWrapper {
         return result
     }
 
-    async discoverReaders() {
+    async discoverReaders () {
         const result = await this._terminal.discoverReaders()
         return result
     }
@@ -107,17 +125,19 @@ class TerminalFactory {
         onReaderDisconnect,
         onConnectionStatusChange,
         onPaymentStatusChange,
-        onUnexpectedReaderDisconnect}) {
+        onUnexpectedReaderDisconnect,
+        aquarium}) {
         if (this._terminal) {
             // there's only one terminal in any POS app
             return this._terminal
         }
-        this._terminal = new TerminalWrapper({
+        this._terminal = new Terminal({
             onGetActivationToken,
             onReaderDisconnect,
             onConnectionStatusChange,
             onPaymentStatusChange,
-            onUnexpectedReaderDisconnect
+            onUnexpectedReaderDisconnect,
+            aquarium
         })
         return this._terminal
     }

@@ -24,7 +24,9 @@ function POSDevice(WrappedComponent) {
                 totalPrice: PropTypes.number,
                 unitPrice: PropTypes.number,
                 quantity: PropTypes.number
-            }))
+            })),
+            // This parameter is helpful for demo apps of the POS SDK
+            aquarium: PropTypes.Object
         }
 
         static defaultProps = {
@@ -63,7 +65,8 @@ function POSDevice(WrappedComponent) {
                 onReaderDisconnect: this._connectionManager.onDisconnect,
                 onConnectionStatusChange: this._connectionManager.handleConnectionStatusChange,
                 onPaymentStatusChange: this._connectionManager.handlePaymentStatusChange,
-                onUnexpectedReaderDisconnect: this._connectionManager.handleUnexpectedReaderDisconnect
+                onUnexpectedReaderDisconnect: this._connectionManager.handleUnexpectedReaderDisconnect,
+                aquarium: this.props.aquarium
             })
             this._connectionManager.terminal = terminal
             this._basket = new Basket({terminal, component: this})
