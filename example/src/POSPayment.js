@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import POSDevice from 'react-stripe-pos';
+import Aquarium from 'react-stripe-pos'
 
 class POSPayment extends Component {
 
@@ -28,6 +29,10 @@ class POSPayment extends Component {
                 {this.renderError()}
             </div>
         )
+    }
+
+    renderEventLog () {
+        this.props.events
     }
 
     renderBasketItems () {

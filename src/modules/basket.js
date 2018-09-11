@@ -18,11 +18,11 @@ class Basket {
         }
     }
     async setBasket () {
-        this._component.state.terminal.beginCheckout({
+        this._terminal.beginCheckout({
             // TODO figure out experience for client app to provide unique basket ID
             transactionId: 'some-id'
         })
-        this._component.state.terminal.setBasket({
+        this._terminal.setBasket({
             basket: {
                 lineItems: this._component.state.basketItems
             },
