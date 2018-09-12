@@ -18,6 +18,9 @@ class Terminal {
         if (this._aquarium) {
             let instanceMethodNames = Object.getOwnPropertyNames(Object.getPrototypeOf(this))
             for (let instanceMethodName of instanceMethodNames) {
+                if (instanceMethodName === 'constructor') {
+                    continue
+                }
                 this[instanceMethodName] = this._aquarium.watchAction(this[instanceMethodName])
             }
             // wrap the handlers for tracing as well

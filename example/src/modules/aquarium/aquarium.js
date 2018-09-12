@@ -1,27 +1,94 @@
+import EventEmitter from 'wolfy87-eventemitter'
+import { deepDiff } from 'deep-diff'
 
-class RecipeRunner {
+class Collector extends EventEmitter {
+    collect (action) {
+        this.emit('newAction', action)
+    }
+}
+
+class Action {
+    constructor({
+        name,
+        subjectName,
+        args,
+        type,
+        metadata
+    }) {
+        this.name = name
+        this.subjectName = subjectName
+        this.args = args
+        this.type = type
+    }
+
+    get args()
+    get type()
+    get name()
+    get metadata()
+
+    get requestString() {
+        return JSON.stringify(this._args)
+    }
+}
+
+class RecipeStep extends Action {
+    constructor({
+        description,
+        name,
+        subjectName,
+        args,
+        type,
+        requiredMatchParameters
+    }) {
+        super({name, subjectName, metadata, args})
+        if (!Array.isArray()) {
+            
+        }
+        this._description = description
+        this._requiredMatchParameters = requiredMatchParameters
+    }
+
+    set diff(result) {
+        this._diff = result
+    }
+
+    diff(otherAction) {
+        let thisPropsSubset = {}
+        let otherPropsSubset = {}
+
+        for (let paramName of this._requiredMatchParameters) {
+            thisPropsSubset[paramName] = this[paramName]
+        }
+        for (let paramName of this._requiredMatchParameters) {
+            otherPropsSubset[paramName] = otherAction[paramName]
+        }
+
+        return deepDiff(thisPropSubset, otherPropsSubset)
+    }
+}
+
+class RecipeCollector extends Collector {
     listeners = []
-    startRecipe (recipe) {
-        this._recipe = recipe
+    constructor (recipeSteps) {
+        this._steps = recipeSteps
         this._currentActionIndex = 0
     }
+    get recipeSteps () {
+        return this._steps
+    }
     collect(action) {
-        if (action.actionName === this._recipe[0].actionName) {
-
-        } else {
-            
+        let currentStep = this._steps[this._currentActionIndex]
+        if (this._currentActionIndex > this._steps.length) {
+            let unexpectedAction = new RecipeStep({
+                description: 'Extra Recipe Step Detected'
+            })
         }
-    }
+        let diff = currentStep.diff(action)
+        this._currentActionIndex += 1
 
-    onNewAction(listenFn) {
-        this.listeners.push(listenFn)
+        this.super(action)
     }
-    actionTriggerComponent (component, actionName) {
-        if (actionName === this._recipe[this._currentActionIndex + 1]) {
-            
-        }
-    }
-}   
+}
 
 class Aquarium {
 
@@ -59,19 +126,20 @@ class Aquarium {
         })
     }
 
-    watchAction (actionFunction, actionType='input') {
+    watchAction (actionFunction, type='input') {
         if (!Aquarium.VALID_ACTION_TYPES.includes(actionType)) {
-            throw new Error(`actionType must be one of ${JSON.stringify(Aquarium.VALID_ACTION_TYPES)}`)
+  throw new Error(`actionType must be one of ${JSON.stringify(Aquarium.VALID_ACTION_TYPES)}`)
         }
         
         let thisAquarium = this
         return function(...args) {
-            let action = {
+            let action = new Action({
                 name: actionFunction.name,
                 subject: thisAquarium._subjectName,
-                type: actionType,
-                requestString: JSON.stringify(args)
-            }
+                acceptedParams: thisAquarium._getArgs(actionFunction),
+                args,
+                type
+            })
             let response
             try {
                 response = actionFunction.apply(this, args)
@@ -101,6 +169,25 @@ class Aquarium {
                 }
             }
         }
+    }
+
+    /**
+     * Javascript doesn't offer a decent API to get the function argument names
+     * Pulled regex from https://davidwalsh.name/javascript-arguments.
+     * @param {Function} func 
+     */
+    _getArgs (func) {
+        // First match everything inside the function argument parens.
+        var args = func.toString().match(/function\s.*?\(([^)]*)\)/)[1];
+        
+        // Split the arguments string into an array comma delimited.
+        return args.split(',').map(function(arg) {
+            // Ensure no inline comments are parsed and trim the whitespace.
+            return arg.replace(/\/\*.*\*\//, '').trim();
+        }).filter(function(arg) {
+            // Ensure no undefined values are added.
+            return arg;
+        });
     }
 }
 
