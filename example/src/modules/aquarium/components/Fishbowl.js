@@ -13,7 +13,7 @@ class Fishbowl extends Component {
 
     collect (action) {
         this.setState({
-            actionLog: [...this.state.actionLog, action]
+            actionLog: [action, ...this.state.actionLog]
         })
     }
 
