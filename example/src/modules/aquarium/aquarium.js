@@ -12,22 +12,33 @@ class Action {
         name,
         subjectName,
         args,
-        type,
-        metadata
+        acceptedArgs,
+        type
     }) {
-        this.name = name
-        this.subjectName = subjectName
-        this.args = args
-        this.type = type
+        this._name = name
+        this._subjectName = subjectName
+        this._args = args
+        this._type = type
+        this._acceptedArgs = acceptedArgs
     }
 
-    get args()
-    get type()
-    get name()
-    get metadata()
-
+    get args() {
+        return this._args
+    }
+    get type() {
+        return this._type
+    }
+    get name() {
+        return this._name
+    }
+    get subjectName () {
+        return this._subjectName
+    }
     get requestString() {
         return JSON.stringify(this._args)
+    }
+    get acceptedArgs() {
+        return this._acceptedArgs
     }
 }
 
@@ -40,7 +51,7 @@ class RecipeStep extends Action {
         type,
         requiredMatchParameters
     }) {
-        super({name, subjectName, metadata, args})
+        super({name, subjectName, subjectName, args})
         if (!Array.isArray()) {
             
         }
@@ -63,13 +74,14 @@ class RecipeStep extends Action {
             otherPropsSubset[paramName] = otherAction[paramName]
         }
 
-        return deepDiff(thisPropSubset, otherPropsSubset)
+        return deepDiff(thisPropsSubset, otherPropsSubset)
     }
 }
 
 class RecipeCollector extends Collector {
     listeners = []
     constructor (recipeSteps) {
+        super()
         this._steps = recipeSteps
         this._currentActionIndex = 0
     }
@@ -78,15 +90,17 @@ class RecipeCollector extends Collector {
     }
     collect(action) {
         let currentStep = this._steps[this._currentActionIndex]
-        if (this._currentActionIndex > this._steps.length) {
+        if (!currentStep) {
             let unexpectedAction = new RecipeStep({
-                description: 'Extra Recipe Step Detected'
+                description: 'Extra Recipe Step',
+                ...action,
+                action: action
             })
         }
         let diff = currentStep.diff(action)
         this._currentActionIndex += 1
-
-        this.super(action)
+        currentStep.action = action
+        this.super(currentStep)
     }
 }
 
@@ -121,22 +135,21 @@ class Aquarium {
 
     forwardAction(action) {
         this._actionCollectors.forEach(collector => {
-            console.log(collector)
             collector.collect(action)
         })
     }
 
     watchAction (actionFunction, type='input') {
-        if (!Aquarium.VALID_ACTION_TYPES.includes(actionType)) {
-  throw new Error(`actionType must be one of ${JSON.stringify(Aquarium.VALID_ACTION_TYPES)}`)
+        if (!Aquarium.VALID_ACTION_TYPES.includes(type)) {
+            throw new Error(`actionType must be one of ${JSON.stringify(Aquarium.VALID_ACTION_TYPES)}`)
         }
         
         let thisAquarium = this
         return function(...args) {
             let action = new Action({
                 name: actionFunction.name,
-                subject: thisAquarium._subjectName,
-                acceptedParams: thisAquarium._getArgs(actionFunction),
+                subjectName: thisAquarium._subjectName,
+                acceptedArgs: thisAquarium._getArgs(actionFunction),
                 args,
                 type
             })
@@ -191,4 +204,4 @@ class Aquarium {
     }
 }
 
-export default Aquarium
+export {Aquarium, RecipeCollector, RecipeStep, Collector}

@@ -11,29 +11,28 @@ class Fishbowl extends Component {
         aquarium: PropTypes.object
     }
 
-    collect (action) {
+    logNewAction (action) {
         this.setState({
             actionLog: [action, ...this.state.actionLog]
         })
     }
 
     componentDidMount() {
-        this.props.collector.on('newAction', this.collect)
-        this.props.aquarium.addCollector(this.props.collector)
+        this.props.collector.on('newAction', this.logNewAction.bind(this))
     }
 
     renderAction (action) {
         // TODO update when we go open source!
-        let githubLink = `https://git.corp.stripe.com/stripe-internal/react-stripe-pos/search?l=javascript&q="${action.subject}.${action.name}"&type=Code`
+        let githubLink = `https://git.corp.stripe.com/stripe-internal/react-stripe-pos/search?l=javascript&q="${action.subjectName}.${action.name}"&type=Code`
         return <div className='row box'>
             {action.type === 'input' ? <p>
-                    <i><a target="_blank" href={githubLink}>{action.subject}.{action.name}</a></i>
+                    <i><a target="_blank" href={githubLink}>{action.subjectName}.{action.name}</a></i>
                 </p>
                 : <p>
                     <i className="material-icons">offline_bolt</i>
                         <i>
                             <strong>
-                            <a target="_blank" href={githubLink}>{action.name}({action.acceptedParams})</a>
+                            <a target="_blank" href={githubLink}>{action.name}({action.acceptedArgs})</a>
                         </strong>
                     </i>
                 </p>}

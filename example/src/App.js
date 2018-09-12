@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import {createPosActivationToken, registerDevice, createIntent} from './APIClient';
 import POSPayment from './POSPayment'
-import {Fishbowl} from './modules/aquarium'
-import {Aquarium} from './modules/aquarium'
+import {Aquarium, Fishbowl, RecipeCollector, Collector} from './modules/aquarium'
 
 class App extends Component {
     render () {
         let aquarium = new Aquarium('terminal')
+        let collector = new Collect
+        aquarium.addCollector(collector)
         return (
             <div className="StripePOS" style={{
               margin: 'auto',
@@ -31,7 +32,7 @@ class App extends Component {
                 <div className="col s6">
                     <h1>SDK Events</h1>
                     <Fishbowl
-                      aquarium={aquarium}
+                      collector={collector}
                     />
                 </div>
               </div>
