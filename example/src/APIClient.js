@@ -14,7 +14,7 @@ async function createPosActivationToken(posDeviceId) {
     let json = await res.json();
     return json.activation_token;
   }
-  
+
 async function registerDevice(pairingCode) {
 const formData = new URLSearchParams();
 formData.append('pairing_code', pairingCode);

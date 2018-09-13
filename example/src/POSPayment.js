@@ -22,10 +22,14 @@ class POSPayment extends Component {
                             </div>)
                         }
                     </div>
-                : null}
-                <h3>Discover a New Device</h3>
-                <input type='text' onChange={event => this.setState({discoveryToken: event.target.value})} />
-                <button className='btn' onClick={() => this.props.stripePos.discoverReaders(this.state.discoveryToken)}>Discover</button>
+                : (
+                    <div className="row center">
+                        <button className="btn green" onClick={() => this.props.stripePos.discoverReaders()}>Discover Readers</button>
+                    </div>
+                )}
+                <h3>Register a New Device</h3>
+                <input type='text' onChange={event => this.setState({registrationToken: event.target.value})} />
+                <button className='btn' onClick={() => this.props.stripePos.discoverReaders(this.state.registrationToken)}>Register</button>
                 {this.renderError()}
             </div>
         )

@@ -1,29 +1,45 @@
 import EventEmitter from 'wolfy87-eventemitter'
+import uuid from 'uuid/v4'
 import { deepDiff } from 'deep-diff'
 
 class Collector extends EventEmitter {
     collect (action) {
         this.emit('newAction', action)
     }
+    update (action) {
+        this.emit('updateAction', action)
+    }
 }
 
 class Action {
     constructor({
+        id,
         name,
         subjectName,
         args,
         acceptedArgs,
-        type
+        type,
+        response,
+        timestamp
     }) {
+        this._id = id || uuid()
+        this._timestamp = Date.now()
         this._name = name
         this._subjectName = subjectName
         this._args = args
         this._type = type
         this._acceptedArgs = acceptedArgs
+        this._response = response
     }
 
+    get id() {
+        return this._id
+    }
     get args() {
         return this._args
+    }
+    get response () {
+        return this._response
     }
     get type() {
         return this._type
@@ -34,11 +50,38 @@ class Action {
     get subjectName () {
         return this._subjectName
     }
-    get requestString() {
-        return JSON.stringify(this._args)
+    get requestString () {
+        return JSON.stringify(this._args, null, 2)
     }
-    get acceptedArgs() {
+    get responseString () {
+        return JSON.stringify(this._response, null, 2)
+    }
+    get acceptedArgs () {
         return this._acceptedArgs
+    }
+    get timestamp () {
+        return this._timestamp
+    }
+
+    clone ({
+        name,
+        subjectName,
+        args,
+        acceptedArgs,
+        type,
+        response,
+        timestamp
+    }) {
+        return new Action({
+            id: this.id,
+            name: name || this.name,
+            subjectName: subjectName || this.subjectName,
+            args: args || this.args,
+            acceptedArgs: acceptedArgs || this.acceptedArgs,
+            type: type || this.type,
+            response: response || this._response,
+            timestamp: timestamp || this._timestamp
+        })
     }
 }
 
@@ -106,7 +149,13 @@ class RecipeCollector extends Collector {
 
 class Aquarium {
 
-    static VALID_ACTION_TYPES = ['input', 'output']
+    static VALID_ACTION_TYPES = {
+        INPUT: 'input',
+        EVENT: 'event',
+        PROMISE: 'promise',
+        PROMISE_RESOLVE: 'promise-resolve',
+        PROMISE_REJECT: 'promise-rejection'
+    }
 
     _actionCollectors = [
     ]
@@ -139,47 +188,66 @@ class Aquarium {
         })
     }
 
+    updateAction(action) {
+        this._actionCollectors.forEach(collector => {
+            collector.update(action)
+        })
+    }
+
     watchAction (actionFunction, type='input') {
-        if (!Aquarium.VALID_ACTION_TYPES.includes(type)) {
-            throw new Error(`actionType must be one of ${JSON.stringify(Aquarium.VALID_ACTION_TYPES)}`)
+        let validActions = Object.values(Aquarium.VALID_ACTION_TYPES)
+        if (!validActions.includes(type)) {
+            throw new Error(`actionType must be one of ${JSON.stringify(Object.keys(Aquarium.VALID_ACTION_TYPES))}`)
         }
-        
+    
         let thisAquarium = this
         return function(...args) {
-            let action = new Action({
+            let response
+            let synchronousAction = new Action({
                 name: actionFunction.name,
                 subjectName: thisAquarium._subjectName,
                 acceptedArgs: thisAquarium._getArgs(actionFunction),
                 args,
                 type
             })
-            let response
             try {
+                /**
+                 * Actions are immutable. We first forward the action before calling
+                 * the actionFunction since we don't know what the response type will
+                 * be because - javascript. We then subsequently send update events
+                 * with updated versions of the action which contain the same action.id
+                 */
+                thisAquarium.forwardAction(synchronousAction)
                 response = actionFunction.apply(this, args)
-                if (response instanceof Promise) {
+                if ((response instanceof Promise)) {
+                    // We create a new action here because we explicitly
+                    // want to record the resolution of an 'promise' action as
+                    // a separate action
+                    let asyncAction = new Action({
+                        name: synchronousAction.name,
+                        subjectName: synchronousAction.subjectName,
+                        acceptedArgs: synchronousAction.acceptedArgs,
+                        args: synchronousAction.args,
+                        type: 'promise'
+                    })
+                    thisAquarium.updateAction(synchronousAction.clone({type: 'promise'}))
                     response.then(promiseResult => {
-                        let responseString = JSON.stringify(promiseResult)
-                        action.response = responseString
+                        asyncAction = asyncAction.clone({response: promiseResult, type: 'promise-resolve'})
                     }).catch(e => {      
-                        action.exception = e.message
-                    }).then(() => {
-                        thisAquarium.forwardAction(action)
-                    }, () => thisAquarium.forwardAction(action))                                  
+                        asyncAction = asyncAction.clone({exception: e.message, type: 'promise-rejection'})
+                    })
+                    .finally(() => {
+                        thisAquarium.forwardAction(asyncAction)
+                    })
                 } else {
                     // trace the synchronous result
-                    let responseString = JSON.stringify(response)
-                    action.response = responseString
+                    thisAquarium.updateAction(synchronousAction.clone({response}))
                 }
                 return response
             } catch(e) {
                 // trace the synchronous exception
-                action.exception = e.message
+                thisAquarium.updateAction(synchronousAction.clone({exception: e.message}))
                 throw e
-            } finally {
-                if (!(response instanceof Promise)) {
-                    // asynchronous action responses are already forwarded
-                    thisAquarium.forwardAction(action)
-                }
             }
         }
     }

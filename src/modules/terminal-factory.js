@@ -1,7 +1,7 @@
 /* globals StripePos */
 /**
  * TerminalWrapper wraps the terminal and allows for users of this module to
- * log the output of requests to and from the Stripe SDK and output the github content
+ * log the event of requests to and from the Stripe SDK and event the github content
  */
 class Terminal {
     constructor({
@@ -18,33 +18,34 @@ class Terminal {
         if (this._aquarium) {
             let instanceMethodNames = Object.getOwnPropertyNames(Object.getPrototypeOf(this))
             for (let instanceMethodName of instanceMethodNames) {
-                if (instanceMethodName === 'constructor') {
+                // Simple logic to detect handlers and constructor
+                if (instanceMethodName === 'constructor' || instanceMethodName.startsWith('on')) {
                     continue
                 }
                 this[instanceMethodName] = this._aquarium.watchAction(this[instanceMethodName])
             }
             // wrap the handlers for tracing as well
             this._terminal = StripePos.createTerminal({
-                onGetActivationToken: this._aquarium.watchAction(this.onGetActivationToken(onGetActivationToken), 'output'),
-                onReaderDisconnect: this._aquarium.watchAction(this.onReaderDisconnect(onReaderDisconnect), 'output'),
-                onConnectionStatusChange: this._aquarium.watchAction(this.onConnectionStatusChange(onConnectionStatusChange), 'output'),
-                onPaymentStatusChange: this._aquarium.watchAction(this.onPaymentStatusChange(onPaymentStatusChange), 'output'),
-                onUnexpectedReaderDisconnect: this._aquarium.watchAction(this.onUnexpectedReaderDisconnect(onUnexpectedReaderDisconnect), 'output')
+                onGetActivationToken: this._aquarium.watchAction(this.onGetActivationToken(onGetActivationToken), 'event'),
+                onReaderDisconnect: this._aquarium.watchAction(this.onReaderDisconnect(onReaderDisconnect), 'event'),
+                onConnectionStatusChange: this._aquarium.watchAction(this.onConnectionStatusChange(onConnectionStatusChange), 'event'),
+                onPaymentStatusChange: this._aquarium.watchAction(this.onPaymentStatusChange(onPaymentStatusChange), 'event'),
+                onUnexpectedReaderDisconnect: this._aquarium.watchAction(this.onUnexpectedReaderDisconnect(onUnexpectedReaderDisconnect), 'event')
             })
         } else {
             this._terminal = StripePos.createTerminal({
-                onGetActivationToken: Terminal.OnGetActivationToken(onGetActivationToken),
-                onReaderDisconnect: Terminal.onReaderDisconnect(onReaderDisconnect),
-                onConnectionStatusChange: Terminal.OnConnectionStatusChange(onConnectionStatusChange),
-                onPaymentStatusChange: Terminal.OnPaymentStatusChange(onPaymentStatusChange),
-                onUnexpectedReaderDisconnect: Terminal.OnUnexpectedReaderDisconnect(onUnexpectedReaderDisconnect)
+                onGetActivationToken: this.onGetActivationToken(onGetActivationToken),
+                onReaderDisconnect: this.onReaderDisconnect(onReaderDisconnect),
+                onConnectionStatusChange: this.onConnectionStatusChange(onConnectionStatusChange),
+                onPaymentStatusChange: this.onPaymentStatusChange(onPaymentStatusChange),
+                onUnexpectedReaderDisconnect: this.onUnexpectedReaderDisconnect(onUnexpectedReaderDisconnect)
             })
         }
     }
     /**
      * The following static methods are wrappers for the the event handlers coming out of the
      * Stripe POS SDK. These wrappers allow for static points in code to log and demonstrate
-     * the outputs expected from the terminal SDK. The declared function in each of these
+     * the events expected from the terminal SDK. The declared function in each of these
      * handlers is explicitly named the ame exact name as the named parameter of the handler
      * expected by the `createTerminal` factory method
      */
@@ -130,6 +131,7 @@ class TerminalFactory {
         onPaymentStatusChange,
         onUnexpectedReaderDisconnect,
         aquarium}) {
+
         if (this._terminal) {
             // there's only one terminal in any POS app
             return this._terminal

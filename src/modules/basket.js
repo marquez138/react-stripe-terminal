@@ -18,6 +18,10 @@ class Basket {
         }
     }
     async setBasket () {
+        if (this._component.state.connectionStatus !== 'connected') {
+            // if we aren't connected do not touch the basket
+            return
+        }
         this._terminal.beginCheckout({
             // TODO figure out experience for client app to provide unique basket ID
             transactionId: 'some-id'

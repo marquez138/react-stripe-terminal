@@ -1,51 +1,140 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/styles/hljs';
+
+
+const CodeBlock = (props) => {
+  return (
+      <div className="row">
+        <div className="row col s10 offset-s1 code-block">
+            <SyntaxHighlighter language='json' style={docco}>{props.codeString}</SyntaxHighlighter>
+        </div>
+      </div>
+
+  )
+}
 
 class Fishbowl extends Component {
-
-    state = {
-        actionLog: []
-    }
 
     static propTypes = {
         aquarium: PropTypes.object
     }
 
+    static defaultProps = {
+        eventTimeGroupingGranularity: 5000
+    }
+
+    state = {
+        actionLog: []
+    }
+
+    actionLog = []
+    
+    scrollToBottom () {
+        this.eventEndDiv.scrollIntoView({ behavior: 'smooth'})
+    }
+
     logNewAction (action) {
+        this.actionLog.push(action)
+
         this.setState({
-            actionLog: [action, ...this.state.actionLog]
+            actionLog: this.actionLog
         })
     }
 
-    componentDidMount() {
-        this.props.collector.on('newAction', this.logNewAction.bind(this))
+    updateAction (action) {
+        this.actionLog = this.actionLog.map(actionLogAction => {
+            if (actionLogAction.id === action.id) {
+                return action
+            }
+            return actionLogAction
+        })
+        this.setState({
+            actionLog: this.actionLog
+        })
     }
 
-    renderAction (action) {
-        // TODO update when we go open source!
-        let githubLink = `https://git.corp.stripe.com/stripe-internal/react-stripe-pos/search?l=javascript&q="${action.subjectName}.${action.name}"&type=Code`
-        return <div className='row box'>
-            {action.type === 'input' ? <p>
-                    <i><a target="_blank" href={githubLink}>{action.subjectName}.{action.name}</a></i>
-                </p>
-                : <p>
-                    <i className="material-icons">offline_bolt</i>
-                        <i>
-                            <strong>
-                            <a target="_blank" href={githubLink}>{action.name}({action.acceptedArgs})</a>
-                        </strong>
-                    </i>
-                </p>}
-            <p>type: {action.type}</p>
-            {action.args.length ? <p>parameters: {action.requestString}</p> : null}
-            <p>response: {action.response}</p>
-        </div>
+    componentWillMount() {
+        this.props.collector.on('newAction', this.logNewAction.bind(this))
+        this.props.collector.on('updateAction', this.updateAction.bind(this))
+    }
+
+    componentDidMount() {
+        this.scrollToBottom()
+    }
+
+    componentDidUpdate() {
+        this.scrollToBottom()
+    }
+
+    renderAction ({action, link, active}) {
+        switch (action.type) {
+            case 'promise':
+                return (
+                    <div className={`row box ${active ? 'active' : ''}`}>
+                        <p>
+                            <i className="material-icons">watch_later</i>
+                            <i><a target="_blank" href={link}><strong>{action.subjectName}.{action.name}</strong></a></i>
+                            {action.args.length ?
+                                <div>
+                                    parameters: <CodeBlock codeString={action.requestString}/>
+                                </div> : null}
+                        </p>
+                    </div>
+                )
+            case 'promise-resolve':
+            case 'input':
+                return (
+                    <div className={`row box ${active ? 'active' : ''}`}>
+                        <p>
+                            <i className='material-icons'>{(action.exception || (action.response && action.response.error)) ? 'error' : 'done'}</i>
+                            <i><a target="_blank" href={link}><strong>{action.subjectName}.{action.name}</strong></a></i>
+                        </p>
+                        {action.args.length ?
+                            <div>
+                                parameters: <CodeBlock codeString={action.requestString}/>
+                            </div> : null}
+                        {action.response ? 
+                            <div>
+                                returned: <CodeBlock codeString={action.responseString}/>
+                            </div> : null}
+                    </div>
+                )
+            case 'event':
+                return (
+                    <div className={`row box ${active ? 'active' : ''}`}>
+                        <p>
+                            <i className='material-icons'>offline_bolt</i>
+                            <i><a target="_blank" href={link}><strong>{action.name}({action.acceptedArgs})</strong></a></i>
+                        </p>
+                        {action.args.length ?
+                            <div>
+                                parameters: <CodeBlock codeString={action.requestString}/>
+                            </div> : null}
+                        {action.response ? 
+                            <div>
+                                returned: <CodeBlock codeString={action.responseString}/>
+                            </div> : null}
+                    </div>
+                )
+            default:
+                return null
+        }
     }
 
     render () {
         return (
-            <div className="EventLog">
-              {this.state.actionLog.map(action => this.renderAction(action))}
+            <div className="Fishbowl">
+                {this.state.actionLog.map(action => this.renderAction({
+                  action,
+                  // TODO update when we go open source
+                  link: `https://git.corp.stripe.com/stripe-internal/react-stripe-pos/search?l=javascript&q="${action.subjectName}.${action.name}"&type=Code`,
+                  active: Date.now() - action.timestamp < this.props.eventTimeGroupingGranularity}))
+                }
+                <div ref={el => this.eventEndDiv = el}>
+
+                </div>
             </div>
         )
     }

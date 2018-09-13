@@ -73,7 +73,6 @@ function POSDevice(WrappedComponent) {
             this._paymentCreator = new PaymentCreator({terminal, component: this})
             this.setState({terminal})
             this._readerDiscovery = new ReaderDiscover({terminal, component: this})
-            this._readerDiscovery.discoverReaders({})
         }
 
         render() {
@@ -84,7 +83,7 @@ function POSDevice(WrappedComponent) {
                     connectToReader: reader => this.connectToReader(reader),
                     disconnectReader: reader => this._connectionManager.disconnectReader(), 
                     removeBasketItem: index => this._basket.removeBasketItem(index),
-                    discoverReaders: discoveryToken => this._readerDiscovery.discoverReaders({discoveryToken}),
+                    discoverReaders: registrationToken => this._readerDiscovery.discoverReaders({registrationToken}),
                     createPayment: options => this._paymentCreator.createPayment({...options})
                 }
             })}

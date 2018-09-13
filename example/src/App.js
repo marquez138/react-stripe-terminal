@@ -1,12 +1,28 @@
 import React, { Component } from 'react'
 import {createPosActivationToken, registerDevice, createIntent} from './APIClient';
 import POSPayment from './POSPayment'
-import {Aquarium, Fishbowl, RecipeCollector, Collector} from './modules/aquarium'
+import {Aquarium, Fishbowl, RecipeCollector, RecipeStep, Collector} from './modules/aquarium'
 
 class App extends Component {
     render () {
         let aquarium = new Aquarium('terminal')
-        let collector = new Collect
+        let collector = new Collector()
+        let recipe = new RecipeCollector([
+          new RecipeStep({
+            description: 'Discover Your Readers',
+            name: 'discoverReaders',
+            requiredMatchParameters: ['name']
+          }),
+          new RecipeStep({
+            description: 'Stripe SDK Response with an Activation Token',
+            name: 'onGetActivationToken',
+            requiredMatchParameters: []
+          }),
+          new RecipeStep({
+            description: ''
+          })
+        ])
+
         aquarium.addCollector(collector)
         return (
             <div className="StripePOS" style={{
@@ -17,12 +33,8 @@ class App extends Component {
               <div className="row">
                 <div className="col s6">
                   <POSPayment
-                    basketItems={[{
-                      description: 'Yellow Hat',
-                      totalPrice: 30000,
-                      unitPrice: 10000,
-                      quantity: 3
-                    }]}
+                    // You can render static basket items via props or dynamically via addBasketItem
+                    basketItems={[]}
                     taxRate={0.07}
                     activationTokenRequestHandler={createPosActivationToken}
                     discoveryTokenRequestHandler={registerDevice}
@@ -30,9 +42,11 @@ class App extends Component {
                     aquarium={aquarium}/>
                 </div>
                 <div className="col s6">
-                    <h1>SDK Events</h1>
+                    <h1>SDK Event Log</h1>
+                    <p>What's going on with the Stripe Terminal SDK? See below!</p>
                     <Fishbowl
                       collector={collector}
+                      eventTimeGroupingGranularity={1000}
                     />
                 </div>
               </div>
