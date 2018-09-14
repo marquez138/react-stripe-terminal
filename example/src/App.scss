@@ -5,6 +5,7 @@
 @import './node_modules/materialize-css/sass/components/icons-material-design';
 
 $main-text-color: color('blue-grey', 'base');
+$active-color: color('blue-grey', 'lighten-5');
 $secondary-text-color: color('grey', 'lighten-1');
 $input-shadow-color: #e6ebf1;
 $section-shadow-color: #cfd7df;
@@ -12,9 +13,14 @@ $border-radius: 4px;
 $basket-height: 300px;
 
 .StripePOS {
-  .EventLog {
+  .Fishbowl {
     overflow-y: auto;
-    max-height: ($basket-height + 100px)
+    max-height: ($basket-height + 400px);
+    .code-block {
+      pre {
+        border-radius: 5px;
+      }
+    }
   }
   // transitions - trusty SO reference https://stackoverflow.com/questions/11660710/css-transition-fade-in
   .fade-in {
@@ -47,6 +53,9 @@ $basket-height: 300px;
   }
   .reader-name {
     font-size: 1.2rem
+  }
+  .active {
+    background-color: $active-color
   }
   .box {
     margin: 10px;

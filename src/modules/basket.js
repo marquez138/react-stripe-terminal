@@ -17,13 +17,17 @@ class Basket {
             balanceDue: tax + total
         }
     }
-    async setBasket () {
+    async setCart () {
+        if (this._component.state.connectionStatus !== 'connected') {
+            // if we aren't connected do not touch the basket
+            return
+        }
         this._terminal.beginCheckout({
             // TODO figure out experience for client app to provide unique basket ID
             transactionId: 'some-id'
         })
-        this._terminal.setBasket({
-            basket: {
+        this._terminal.setCart({
+            cart: {
                 lineItems: this._component.state.basketItems
             },
             totals: this.computeBasketTotals(this._component.state.basketItems)
@@ -35,15 +39,11 @@ class Basket {
             return
         }
         if (this._component.state.basketItems.length === 0) {
-            console.log('begin checkout')
-            try {
-                let result = await this._terminal.beginCheckout({
-                    transactionId: 'some-id' // TODO how should we generate these?
-                })
-                console.log('begin checkout response')
-                console.log(result)
-            } catch (e) {
-                console.error(e)
+            let result = await this._terminal.beginCheckout({
+                transactionId: 'some-id' // TODO how should we generate these?
+            })
+            if (result.error) {
+                this._component.setState({ error: result.error })
             }
         }
         const newItems = [...this._component.state.basketItems, basketItem]
@@ -52,12 +52,15 @@ class Basket {
             totals: this.computeBasketTotals(newItems)
         }, async () => {
             // TODO - The API docs are missing how to handle an errors here
-            let result = await this._terminal.setBasket({
-                basket: {
+            let response = await this._terminal.setCart({
+                cart: {
                     lineItems: this._component.state.basketItems
                 },
                 totals: this._component.state.totals
             })
+            if (response.error) {
+                this._component.setState({ error: response.error })
+            }
         })
     }
     clearBasket = async () => {
@@ -83,11 +86,10 @@ class Basket {
             totals: this.computeBasketTotals(newItems)
         }, () => {
             if (this._component.state.basketItems.length === 0) {
-                console.log('end checkout')
                 return this._terminal.endCheckout()
             }
-            this._terminal.setBasket({
-                basket: {
+            this._terminal.setCart({
+                cart: {
                     lineItems: this._component.state.basketItems
                 },
                 totals: this._component.state.totals

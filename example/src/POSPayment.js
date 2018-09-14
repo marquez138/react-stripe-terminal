@@ -11,10 +11,13 @@ class POSPayment extends Component {
                     <div className="row">
                         <h2>Connect to a Device</h2>
                         {this.props.stripePos.discoveredReaders.map(reader =>
-                            <div className='row box' key={reader.paired_device_id}>
+                            <div className='row box' key={reader.id}>
                                 <div className="col s8 reader-name">
-                                    <strong>{reader.ip_address}</strong>
-                                    <p>Device ID: {reader.paired_device_id}</p>
+                                    <strong>{reader.label}</strong>
+                                    <p>{reader.ip_address}</p>
+                                    <p>Device: {reader.device_type}</p>
+                                    <p>Device ID: {reader.id}</p>
+                                    <p>Serial#: {reader.serial_number}</p>
                                 </div>
                                 <div className="col s4">
                                     <button className='btn right' onClick={() => this.props.stripePos.connectToReader(reader)}>Connect</button>
@@ -22,10 +25,14 @@ class POSPayment extends Component {
                             </div>)
                         }
                     </div>
-                : null}
-                <h3>Discover a New Device</h3>
-                <input type='text' onChange={event => this.setState({discoveryToken: event.target.value})} />
-                <button className='btn' onClick={() => this.props.stripePos.discoverReaders(this.state.discoveryToken)}>Discover</button>
+                : (
+                    <div className="row center">
+                        <button className="btn green" onClick={() => this.props.stripePos.discoverReaders()}>Discover Readers</button>
+                    </div>
+                )}
+                <h3>Register a New Device</h3>
+                <input type='text' onChange={event => this.setState({registrationToken: event.target.value})} />
+                <button className='btn' onClick={() => this.props.stripePos.discoverReaders(this.state.registrationToken)}>Register</button>
                 {this.renderError()}
             </div>
         )

@@ -1,6 +1,9 @@
-import Aquarium from './aquarium'
+import {Aquarium, Collector, RecipeCollector, RecipeStep} from './aquarium'
 import Fishbowl from './components/Fishbowl'
 export {
     Aquarium,
-    Fishbowl
+    Fishbowl,
+    Collector,
+    RecipeCollector,
+    RecipeStep
 }
