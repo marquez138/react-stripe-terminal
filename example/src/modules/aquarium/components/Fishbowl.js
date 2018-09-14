@@ -72,21 +72,21 @@ class Fishbowl extends Component {
         switch (action.type) {
             case 'promise':
                 return (
-                    <div className={`row box ${active ? 'active' : ''}`}>
+                    <div className={`row box ${active ? 'active' : ''}`} key={action.id}>
                         <p>
                             <i className="material-icons">watch_later</i>
                             <i><a target="_blank" href={link}><strong>{action.subjectName}.{action.name}</strong></a></i>
-                            {action.args.length ?
-                                <div>
-                                    parameters: <CodeBlock codeString={action.requestString}/>
-                                </div> : null}
                         </p>
+                        {action.args.length ?
+                            <div>
+                                parameters: <CodeBlock codeString={action.requestString}/>
+                            </div> : null}
                     </div>
                 )
             case 'promise-resolve':
             case 'input':
                 return (
-                    <div className={`row box ${active ? 'active' : ''}`}>
+                    <div className={`row box ${active ? 'active' : ''}`} key={action.id}>
                         <p>
                             <i className='material-icons'>{(action.exception || (action.response && action.response.error)) ? 'error' : 'done'}</i>
                             <i><a target="_blank" href={link}><strong>{action.subjectName}.{action.name}</strong></a></i>
@@ -103,7 +103,7 @@ class Fishbowl extends Component {
                 )
             case 'event':
                 return (
-                    <div className={`row box ${active ? 'active' : ''}`}>
+                    <div className={`row box ${active ? 'active' : ''}`} key={action.id}>
                         <p>
                             <i className='material-icons'>offline_bolt</i>
                             <i><a target="_blank" href={link}><strong>{action.name}({action.acceptedArgs})</strong></a></i>

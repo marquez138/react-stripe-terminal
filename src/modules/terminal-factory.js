@@ -1,4 +1,4 @@
-/* globals StripePos */
+/* globals StripeTerminal */
 /**
  * TerminalWrapper wraps the terminal and allows for users of this module to
  * log the event of requests to and from the Stripe SDK and event the github content
@@ -25,7 +25,7 @@ class Terminal {
                 this[instanceMethodName] = this._aquarium.watchAction(this[instanceMethodName])
             }
             // wrap the handlers for tracing as well
-            this._terminal = StripePos.createTerminal({
+            this._terminal = StripeTerminal.create({
                 onGetActivationToken: this._aquarium.watchAction(this.onGetActivationToken(onGetActivationToken), 'event'),
                 onReaderDisconnect: this._aquarium.watchAction(this.onReaderDisconnect(onReaderDisconnect), 'event'),
                 onConnectionStatusChange: this._aquarium.watchAction(this.onConnectionStatusChange(onConnectionStatusChange), 'event'),
@@ -33,7 +33,7 @@ class Terminal {
                 onUnexpectedReaderDisconnect: this._aquarium.watchAction(this.onUnexpectedReaderDisconnect(onUnexpectedReaderDisconnect), 'event')
             })
         } else {
-            this._terminal = StripePos.createTerminal({
+            this._terminal = StripeTerminal.create({
                 onGetActivationToken: this.onGetActivationToken(onGetActivationToken),
                 onReaderDisconnect: this.onReaderDisconnect(onReaderDisconnect),
                 onConnectionStatusChange: this.onConnectionStatusChange(onConnectionStatusChange),
@@ -101,8 +101,8 @@ class Terminal {
         return result
     }
 
-    async setBasket(options) {
-        const result = await this._terminal.setBasket(options)
+    async setCart(options) {
+        const result = await this._terminal.setCart(options)
         return result
     }
 
