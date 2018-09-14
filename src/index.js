@@ -52,7 +52,7 @@ function POSDevice(WrappedComponent) {
             await this._connectionManager.connectToReader(reader)
 
             if (this.state.basketItems.length) {
-                await this._basket.setBasket()
+                await this._basket.setCart()
             }
         }
 
