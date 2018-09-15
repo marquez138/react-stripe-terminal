@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import POSDevice from 'react-stripe-pos';
-import Aquarium from 'react-stripe-pos'
 
 class POSPayment extends Component {
 

@@ -6,6 +6,8 @@
 
 $main-text-color: color('blue-grey', 'base');
 $active-color: color('blue-grey', 'lighten-5');
+$failed-color: color('red', 'lighten-5');
+$success-color: color('green', 'lighten-5');
 $secondary-text-color: color('grey', 'lighten-1');
 $input-shadow-color: #e6ebf1;
 $section-shadow-color: #cfd7df;
@@ -13,6 +15,22 @@ $border-radius: 4px;
 $basket-height: 300px;
 
 .StripePOS {
+  // transitions - trusty SO reference https://stackoverflow.com/questions/11660710/css-transition-fade-in
+  .fade-in {
+      opacity: 1;
+      animation-name: fade-in-opacity;
+      animation-iteration-count: 1;
+      animation-timing-function: ease-in;
+      animation-duration: .25s;
+    }
+    @keyframes fade-in-opacity {
+      0% {
+        opacity: 0
+      }
+      100% {
+        opacity: 1
+      }
+    }
   .Fishbowl {
     overflow-y: auto;
     max-height: ($basket-height + 400px);
@@ -21,23 +39,11 @@ $basket-height: 300px;
         border-radius: 5px;
       }
     }
-  }
-  // transitions - trusty SO reference https://stackoverflow.com/questions/11660710/css-transition-fade-in
-  .fade-in {
-    opacity: 1;
-    animation-name: fade-in-opacity;
-    animation-iteration-count: 1;
-    animation-timing-function: ease-in;
-    animation-duration: .25s;
-  }
-  @keyframes fade-in-opacity {
-    0% {
-      opacity: 0
-    }
-    100% {
-      opacity: 1
+    .action-item {
+      @extend .fade-in
     }
   }
+  
   font-family: "Helvetica Neue", Helvetica, sans-seankrif;
   span {
     font-size: 18px;
@@ -54,8 +60,14 @@ $basket-height: 300px;
   .reader-name {
     font-size: 1.2rem
   }
+  .success {
+    background-color: $success-color
+  }
   .active {
     background-color: $active-color
+  }
+  .failed {
+    background-color: $failed-color
   }
   .box {
     margin: 10px;

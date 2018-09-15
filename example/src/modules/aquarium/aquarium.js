@@ -1,6 +1,6 @@
 import EventEmitter from 'wolfy87-eventemitter'
 import uuid from 'uuid/v4'
-import { deepDiff } from 'deep-diff'
+import deepDiff from 'deep-diff'
 
 class Collector extends EventEmitter {
     collect (action) {
@@ -86,27 +86,52 @@ class Action {
 }
 
 class RecipeStep extends Action {
+    static STATUS = {
+        SUCCESS: 'success',
+        PENDING: 'pending',
+        FAILED: 'failed',
+        UNATTEMPTED: 'unattempted'
+    }
+
     constructor({
+        id,
         description,
         name,
         subjectName,
         args,
         type,
-        requiredMatchParameters
+        requiredMatchParameters,
+        actualAction,
+        status,
+        diff
     }) {
-        super({name, subjectName, subjectName, args})
-        if (!Array.isArray()) {
-            
-        }
+        super({id, name, subjectName, subjectName, args, type})
         this._description = description
         this._requiredMatchParameters = requiredMatchParameters
+        this._status = RecipeStep.STATUS.UNATTEMPTED
+        this._description = description || this._description
+        this._actualAction = actualAction || this._actualAction
+        this._status = status || this._status
+        this._diff = diff || this._diff
     }
 
-    set diff(result) {
-        this._diff = result
+    get description () {
+        return this._description
     }
 
-    diff(otherAction) {
+    get diff() {
+        return this._diff
+    }
+
+    get status() {
+        return this._status
+    }
+
+    get actualAction () {
+        return this._actualAction
+    }
+
+    diffAction(otherAction) {
         let thisPropsSubset = {}
         let otherPropsSubset = {}
 
@@ -116,8 +141,49 @@ class RecipeStep extends Action {
         for (let paramName of this._requiredMatchParameters) {
             otherPropsSubset[paramName] = otherAction[paramName]
         }
+        this._diff = deepDiff.diff(thisPropsSubset, otherPropsSubset)
+        if (!this._diff) {
+            return this.clone({
+                status: RecipeStep.STATUS.SUCCESS,
+                actualAction: otherAction
+            })
+        } else {
+            return this.clone({
+                status: RecipeStep.STATUS.FAILED,
+                actualAction: otherAction,
+                diff: this._diff})
+        }
+    }
 
-        return deepDiff(thisPropsSubset, otherPropsSubset)
+    clone ({
+        name,
+        description,
+        subjectName,
+        args,
+        acceptedArgs,
+        type,
+        response,
+        actualAction,
+        timestamp,
+        status,
+        diff
+    }) {
+        let step = new RecipeStep({
+            id: this.id,
+            name: name || this.name,
+            subjectName: subjectName || this.subjectName,
+            args: args || this.args,
+            acceptedArgs: acceptedArgs || this.acceptedArgs,
+            type: type || this.type,
+            response: response || this._response,
+            timestamp: timestamp || this._timestamp,
+            diff: diff || this._diff,
+            description: description || this._description,
+            actualAction: actualAction || this._actualAction,
+            status: status || this._status,
+        })
+
+        return step
     }
 }
 
@@ -128,22 +194,35 @@ class RecipeCollector extends Collector {
         this._steps = recipeSteps
         this._currentActionIndex = 0
     }
-    get recipeSteps () {
+    get steps () {
         return this._steps
+    }
+    update(action) {
+        let recipeStep = this._steps.find(step => {
+            if (step.actualAction && step.actualAction.id === action.id) {
+                return step
+            }
+        })
+        super.update(recipeStep.clone({actualAction: action}))
     }
     collect(action) {
         let currentStep = this._steps[this._currentActionIndex]
         if (!currentStep) {
             let unexpectedAction = new RecipeStep({
                 description: 'Extra Recipe Step',
+                args: action.args || [],
+                status: RecipeStep.STATUS.SUCCESS,
                 ...action,
-                action: action
+                actualAction: action
             })
+            return super.collect(unexpectedAction)
         }
-        let diff = currentStep.diff(action)
+        // It might be strange calling updateAction within collect()
+        // however we are updating a known recipe step
+        this._steps[this._currentActionIndex] = currentStep.diffAction(action)
+
+        super.update(this._steps[this._currentActionIndex])
         this._currentActionIndex += 1
-        currentStep.action = action
-        this.super(currentStep)
     }
 }
 

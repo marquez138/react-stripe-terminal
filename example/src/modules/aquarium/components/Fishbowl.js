@@ -1,19 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { docco } from 'react-syntax-highlighter/styles/hljs';
-
-
-const CodeBlock = (props) => {
-  return (
-      <div className="row">
-        <div className="row col s10 offset-s1 code-block">
-            <SyntaxHighlighter language='json' style={docco}>{props.codeString}</SyntaxHighlighter>
-        </div>
-      </div>
-
-  )
-}
+import CodeBlock from './CodeBlock'
+import { RecipeCollector } from '../aquarium'
 
 class Fishbowl extends Component {
 
@@ -58,6 +46,15 @@ class Fishbowl extends Component {
     componentWillMount() {
         this.props.collector.on('newAction', this.logNewAction.bind(this))
         this.props.collector.on('updateAction', this.updateAction.bind(this))
+        
+        // Initialize the event log with recipe steps
+        if (this.props.collector instanceof RecipeCollector) {
+            this.actionLog = this.props.collector.steps
+        
+            this.setState({
+                actionLog: this.props.collector.steps
+            })
+        }
     }
 
     componentDidMount() {
@@ -72,7 +69,7 @@ class Fishbowl extends Component {
         switch (action.type) {
             case 'promise':
                 return (
-                    <div className={`row box ${active ? 'active' : ''}`} key={action.id}>
+                    <div className={`row box action-item ${active ? 'active' : ''}`} key={action.id}>
                         <p>
                             <i className="material-icons">watch_later</i>
                             <i><a target="_blank" href={link}><strong>{action.subjectName}.{action.name}</strong></a></i>
@@ -86,7 +83,7 @@ class Fishbowl extends Component {
             case 'promise-resolve':
             case 'input':
                 return (
-                    <div className={`row box ${active ? 'active' : ''}`} key={action.id}>
+                    <div className={`row box action-item ${active ? 'active' : ''}`} key={action.id}>
                         <p>
                             <i className='material-icons'>{(action.exception || (action.response && action.response.error)) ? 'error' : 'done'}</i>
                             <i><a target="_blank" href={link}><strong>{action.subjectName}.{action.name}</strong></a></i>
@@ -103,7 +100,7 @@ class Fishbowl extends Component {
                 )
             case 'event':
                 return (
-                    <div className={`row box ${active ? 'active' : ''}`} key={action.id}>
+                    <div className={`row box action-item ${active ? 'active' : ''}`} key={action.id}>
                         <p>
                             <i className='material-icons'>offline_bolt</i>
                             <i><a target="_blank" href={link}><strong>{action.name}({action.acceptedArgs})</strong></a></i>
@@ -133,7 +130,7 @@ class Fishbowl extends Component {
                   active: Date.now() - action.timestamp < this.props.eventTimeGroupingGranularity}))
                 }
                 <div ref={el => this.eventEndDiv = el}>
-
+    
                 </div>
             </div>
         )
