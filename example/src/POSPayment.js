@@ -6,29 +6,26 @@ class POSPayment extends Component {
     renderConnectionDialog () {
         return (
             <div>
-                {this.props.stripePos.discoveredReaders.length ?
-                    <div className="row">
-                        <h2>Connect to a Device</h2>
-                        {this.props.stripePos.discoveredReaders.map(reader =>
-                            <div className='row box' key={reader.id}>
-                                <div className="col s8 reader-name">
-                                    <strong>{reader.label}</strong>
-                                    <p>{reader.ip_address}</p>
-                                    <p>Device: {reader.device_type}</p>
-                                    <p>Device ID: {reader.id}</p>
-                                    <p>Serial#: {reader.serial_number}</p>
-                                </div>
-                                <div className="col s4">
-                                    <button className='btn right' onClick={() => this.props.stripePos.connectToReader(reader)}>Connect</button>
-                                </div>
-                            </div>)
-                        }
-                    </div>
-                : (
+                <div className="row">
+                    <h2>Connect to a Device</h2>
+                    {this.props.stripePos.discoveredReaders.map(reader =>
+                        <div className='row box' key={reader.id}>
+                            <div className="col s8 reader-name">
+                                <strong>{reader.label}</strong>
+                                <p>{reader.ip_address}</p>
+                                <p>Device: {reader.device_type}</p>
+                                <p>Device ID: {reader.id}</p>
+                                <p>Serial#: {reader.serial_number}</p>
+                            </div>
+                            <div className="col s4">
+                                <button className='btn right' onClick={() => this.props.stripePos.connectToReader(reader)}>Connect</button>
+                            </div>
+                        </div>)
+                    }
                     <div className="row center">
                         <button className="btn green" onClick={() => this.props.stripePos.discoverReaders()}>Discover Readers</button>
                     </div>
-                )}
+                </div>
                 <h3>Register a New Device</h3>
                 <input type='text' onChange={event => this.setState({registrationToken: event.target.value})} />
                 <button className='btn' onClick={() => this.props.stripePos.discoverReaders(this.state.registrationToken)}>Register</button>

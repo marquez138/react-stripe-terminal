@@ -8,6 +8,7 @@ $main-text-color: color('blue-grey', 'base');
 $active-color: color('blue-grey', 'lighten-5');
 $failed-color: color('red', 'lighten-5');
 $success-color: color('green', 'lighten-5');
+$extra-action-color: color('blue', 'lighten-5');
 $secondary-text-color: color('grey', 'lighten-1');
 $input-shadow-color: #e6ebf1;
 $section-shadow-color: #cfd7df;
@@ -61,13 +62,16 @@ $basket-height: 300px;
     font-size: 1.2rem
   }
   .success {
-    background-color: $success-color
+    background-color: $success-color;
   }
   .active {
-    background-color: $active-color
+    background-color: $active-color;
   }
   .failed {
-    background-color: $failed-color
+    background-color: $failed-color;
+  }
+  .extra-action {
+    background-color: $extra-action-color;
   }
   .box {
     margin: 10px;
@@ -154,6 +158,16 @@ $basket-height: 300px;
     transform: translateY(-1px);
     background-color: #43458b;
     box-shadow: 0 7px 14px rgba(50, 50, 93, .10), 0 3px 6px rgba(0, 0, 0, .08);
+  }
+  .btn-rounded {
+    @extend .btn;
+    border-radius: 20px;
+    width: 30px;
+    height: 30px;
+    i.material-icons {
+      margin-left: -11px;
+      margin-top: 4px;
+    }
   }
   .error-box {
     @extend .box;

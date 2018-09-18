@@ -1,5 +1,5 @@
 {
-  "name": "react-stripe-pos",
+  "name": "react-stripe-terminal",
   "version": "1.0.0",
   "description": "React bindings for Stripe WebPOS SDK",
   "author": "sedouard",

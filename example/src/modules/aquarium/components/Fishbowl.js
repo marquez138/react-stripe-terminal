@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import CodeBlock from './CodeBlock'
-import { RecipeCollector } from '../aquarium'
+import Action from './Action'
 
 class Fishbowl extends Component {
 
@@ -46,15 +45,6 @@ class Fishbowl extends Component {
     componentWillMount() {
         this.props.collector.on('newAction', this.logNewAction.bind(this))
         this.props.collector.on('updateAction', this.updateAction.bind(this))
-        
-        // Initialize the event log with recipe steps
-        if (this.props.collector instanceof RecipeCollector) {
-            this.actionLog = this.props.collector.steps
-        
-            this.setState({
-                actionLog: this.props.collector.steps
-            })
-        }
     }
 
     componentDidMount() {
@@ -68,53 +58,33 @@ class Fishbowl extends Component {
     renderAction ({action, link, active}) {
         switch (action.type) {
             case 'promise':
-                return (
-                    <div className={`row box action-item ${active ? 'active' : ''}`} key={action.id}>
-                        <p>
-                            <i className="material-icons">watch_later</i>
-                            <i><a target="_blank" href={link}><strong>{action.subjectName}.{action.name}</strong></a></i>
-                        </p>
-                        {action.args.length ?
-                            <div>
-                                parameters: <CodeBlock codeString={action.requestString}/>
-                            </div> : null}
-                    </div>
-                )
+            return (
+                <Action
+                    state={active ? 'active' : ''}
+                    key={action.id}
+                    action={action}
+                    icon='watch_later'
+                />
+            )
             case 'promise-resolve':
             case 'input':
                 return (
-                    <div className={`row box action-item ${active ? 'active' : ''}`} key={action.id}>
-                        <p>
-                            <i className='material-icons'>{(action.exception || (action.response && action.response.error)) ? 'error' : 'done'}</i>
-                            <i><a target="_blank" href={link}><strong>{action.subjectName}.{action.name}</strong></a></i>
-                        </p>
-                        {action.args.length ?
-                            <div>
-                                parameters: <CodeBlock codeString={action.requestString}/>
-                            </div> : null}
-                        {action.response ? 
-                            <div>
-                                returned: <CodeBlock codeString={action.responseString}/>
-                            </div> : null}
-                    </div>
+                    <Action
+                        state={active ? 'active' : ''}
+                        key={action.id}
+                        action={action}
+                        icon='done'
+                    />
                 )
             case 'event':
-                return (
-                    <div className={`row box action-item ${active ? 'active' : ''}`} key={action.id}>
-                        <p>
-                            <i className='material-icons'>offline_bolt</i>
-                            <i><a target="_blank" href={link}><strong>{action.name}({action.acceptedArgs})</strong></a></i>
-                        </p>
-                        {action.args.length ?
-                            <div>
-                                parameters: <CodeBlock codeString={action.requestString}/>
-                            </div> : null}
-                        {action.response ? 
-                            <div>
-                                returned: <CodeBlock codeString={action.responseString}/>
-                            </div> : null}
-                    </div>
-                )
+            return (
+                <Action
+                    state={active ? 'active' : ''}
+                    key={action.id}
+                    action={action}
+                    icon='offline_bolt'
+                />
+            )
             default:
                 return null
         }

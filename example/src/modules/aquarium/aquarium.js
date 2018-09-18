@@ -1,6 +1,8 @@
 import EventEmitter from 'wolfy87-eventemitter'
 import uuid from 'uuid/v4'
 import deepDiff from 'deep-diff'
+import getValue from 'get-value'
+import setValue from 'set-value'
 
 class Collector extends EventEmitter {
     collect (action) {
@@ -90,6 +92,7 @@ class RecipeStep extends Action {
         SUCCESS: 'success',
         PENDING: 'pending',
         FAILED: 'failed',
+        EXTRA: 'extra',
         UNATTEMPTED: 'unattempted'
     }
 
@@ -136,10 +139,10 @@ class RecipeStep extends Action {
         let otherPropsSubset = {}
 
         for (let paramName of this._requiredMatchParameters) {
-            thisPropsSubset[paramName] = this[paramName]
+            setValue(thisPropsSubset, paramName, getValue(this, paramName))
         }
         for (let paramName of this._requiredMatchParameters) {
-            otherPropsSubset[paramName] = otherAction[paramName]
+            setValue(otherPropsSubset, paramName, getValue(otherAction, paramName))
         }
         this._diff = deepDiff.diff(thisPropsSubset, otherPropsSubset)
         if (!this._diff) {
@@ -207,20 +210,27 @@ class RecipeCollector extends Collector {
     }
     collect(action) {
         let currentStep = this._steps[this._currentActionIndex]
+
         if (!currentStep) {
             let unexpectedAction = new RecipeStep({
                 description: 'Extra Recipe Step',
-                args: action.args || [],
-                status: RecipeStep.STATUS.SUCCESS,
-                ...action,
+                args: [],
+                status: RecipeStep.STATUS.EXTRA,
                 actualAction: action
             })
+            this._steps[this._currentActionIndex] = unexpectedAction
+            this._currentActionIndex += 1
             return super.collect(unexpectedAction)
+        }
+
+        if (this._steps[this._currentActionIndex].status !== RecipeStep.STATUS.EXTRA) {
+            // only diff actions that have a RecipeStep part of the original recipe
+            this._steps[this._currentActionIndex] = currentStep.diffAction(action)
+        } else {
+            this._steps[this._currentActionIndex] = currentStep.clone({actualAction: action})
         }
         // It might be strange calling updateAction within collect()
         // however we are updating a known recipe step
-        this._steps[this._currentActionIndex] = currentStep.diffAction(action)
-
         super.update(this._steps[this._currentActionIndex])
         this._currentActionIndex += 1
     }
@@ -256,7 +266,7 @@ class Aquarium {
             throw new Error('Can only add Collectors which implement collect(action)')
         }
         if (this._actionCollectors.includes(collector)) {
-            return collector
+            return
         }
         this._actionCollectors.push(collector)
     }
