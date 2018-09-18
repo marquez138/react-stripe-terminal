@@ -1,0 +1,94 @@
+$animations-duration: 0.25s;
+
+.Fishbowl {
+    overflow-y: auto;
+    .fade-in {
+        opacity: 1;
+        animation-name: fade-in-opacity;
+        animation-iteration-count: 1;
+        animation-timing-function: ease-in;
+        animation-duration: $animations-duration;
+      }
+      @keyframes fade-in-opacity {
+        0% {
+          opacity: 0
+        }
+        100% {
+          opacity: 1
+        }
+    }
+    .code-block {
+      pre {
+        border-radius: 5px;
+        code {
+          font-size: 14px;
+          span {
+            font-size: 14px;
+            line-height: 14px;
+          }
+        }
+      }
+    }
+    .action-item {
+      @extend .fade-in
+    }
+    .hidden {
+      display: none;
+    }
+    .rotated {
+      transform: rotate(90deg);
+      animation: rotate-right-90 $animations-duration;
+    }
+    .not-rotated {
+      transform: rotate(0deg);
+      animation: rotate-left-90 $animations-duration;
+    }
+    @keyframes rotate-left-90 {
+      0% {
+        transform: rotate(90deg)
+      }
+      100% {
+        transform: rotate(0deg)
+      }
+    }
+    @-moz-keyframes rotate-left-90 {
+      0% {
+        transform: rotate(90deg)
+      }
+      100% {
+        transform: rotate(0deg)
+      }
+    }
+    @-webkit-keyframes rotate-left-90 {
+      0% {
+        transform: rotate(90eg)
+      }
+      100% {
+        transform: rotate(0deg)
+      }
+    }
+    @keyframes rotate-right-90 {
+      0% {
+        transform: rotate(0deg)
+      }
+      100% {
+        transform: rotate(90deg)
+      }
+    }
+    @-moz-keyframes rotate-right-90 {
+      0% {
+        transform: rotate(0deg)
+      }
+      100% {
+        transform: rotate(90deg)
+      }
+    }
+    @-webkit-keyframes rotate-right-90 {
+      0% {
+        transform: rotate(0deg)
+      }
+      100% {
+        transform: rotate(90deg)
+      }
+    }
+  }

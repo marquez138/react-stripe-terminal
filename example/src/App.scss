@@ -1,8 +1,7 @@
 @import './node_modules/materialize-css/sass/components/color';
 @import './node_modules/materialize-css/sass/components/variables';
 @import './node_modules/materialize-css/sass/components/grid';
-// Temporary
-@import './node_modules/materialize-css/sass/components/icons-material-design';
+@import './modules/aquarium/styles/Fishbowl.scss';
 
 $main-text-color: color('blue-grey', 'base');
 $active-color: color('blue-grey', 'lighten-5');
@@ -15,6 +14,10 @@ $section-shadow-color: #cfd7df;
 $border-radius: 4px;
 $basket-height: 300px;
 $animations-duration: 0.25s;
+
+.Fishbowl {
+  max-height: ($basket-height + 400px);
+}
 
 .StripePOS {
   i.material-icons {
@@ -47,85 +50,6 @@ $animations-duration: 0.25s;
       height: auto;
     }
   }
-  .Fishbowl {
-    overflow-y: auto;
-    max-height: ($basket-height + 400px);
-    .code-block {
-      pre {
-        border-radius: 5px;
-        code {
-          font-size: 14px;
-          span {
-            font-size: 14px;
-            line-height: 14px;
-          }
-        }
-      }
-    }
-    .action-item {
-      @extend .fade-in
-    }
-    .hidden {
-      display: none;
-    }
-    .rotated {
-      transform: rotate(90deg);
-      animation: rotate-right-90 $animations-duration;
-    }
-    .not-rotated {
-      transform: rotate(0deg);
-      animation: rotate-left-90 $animations-duration;
-    }
-    @keyframes rotate-left-90 {
-      0% {
-        transform: rotate(90deg)
-      }
-      100% {
-        transform: rotate(0deg)
-      }
-    }
-    @-moz-keyframes rotate-left-90 {
-      0% {
-        transform: rotate(90deg)
-      }
-      100% {
-        transform: rotate(0deg)
-      }
-    }
-    @-webkit-keyframes rotate-left-90 {
-      0% {
-        transform: rotate(90eg)
-      }
-      100% {
-        transform: rotate(0deg)
-      }
-    }
-    @keyframes rotate-right-90 {
-      0% {
-        transform: rotate(0deg)
-      }
-      100% {
-        transform: rotate(90deg)
-      }
-    }
-    @-moz-keyframes rotate-right-90 {
-      0% {
-        transform: rotate(0deg)
-      }
-      100% {
-        transform: rotate(90deg)
-      }
-    }
-    @-webkit-keyframes rotate-right-90 {
-      0% {
-        transform: rotate(0deg)
-      }
-      100% {
-        transform: rotate(90deg)
-      }
-    }
-  }
-
   font-family: "Helvetica Neue", Helvetica, sans-seankrif;
   span {
     font-size: 18px;

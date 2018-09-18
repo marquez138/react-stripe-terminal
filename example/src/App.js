@@ -81,6 +81,7 @@ class App extends Component {
     }
 
     render () {
+      console.log(this.props.recipes)
       return (
           <div className="StripePOS" style={{
             margin: 'auto',

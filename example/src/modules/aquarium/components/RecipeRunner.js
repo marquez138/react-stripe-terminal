@@ -27,7 +27,6 @@ class RecipeRunner extends Fishbowl {
         for (let diff of diffs) {
             let path = diff.path.join('.')
 
-
             let diffObjectLeft = setValue({}, path, diff.lhs)
             let diffObjectRight = setValue({}, path, diff.rhs)
 

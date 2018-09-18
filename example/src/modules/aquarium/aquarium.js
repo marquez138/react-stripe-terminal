@@ -161,6 +161,7 @@ class RecipeStep extends Action {
     clone ({
         name,
         description,
+        requiredMatchParameters,
         subjectName,
         args,
         acceptedArgs,
@@ -173,6 +174,7 @@ class RecipeStep extends Action {
     }) {
         let step = new RecipeStep({
             id: this.id,
+            requiredMatchParameters: requiredMatchParameters || this._requiredMatchParameters,
             name: name || this.name,
             subjectName: subjectName || this.subjectName,
             args: args || this.args,
@@ -201,13 +203,28 @@ class RecipeCollector extends Collector {
         return this._steps
     }
     update(action) {
-        let recipeStep = this._steps.find(step => {
+        let recipeIndex = null
+        let updatedRecipeStep = this._steps.find((step, index) => {
             if (step.actualAction && step.actualAction.id === action.id) {
+                recipeIndex = index
                 return step
             }
             return null
         })
-        super.update(recipeStep.clone({actualAction: action}))
+        if (!updatedRecipeStep) {
+            // no corresponding recipe step here. this shouldn't happen
+            // as we only get existing actions which should already be
+            // linked to a recipe step
+            return;
+        }
+        // update the recipe step with the updated actual action
+        if (updatedRecipeStep.status !== RecipeStep.STATUS.EXTRA) {
+            // only diff actions that have a RecipeStep part of the original recipe
+            this._steps[recipeIndex] = updatedRecipeStep.diffAction(action)
+        } else {
+            this._steps[recipeIndex] = updatedRecipeStep.clone({actualAction: action})
+        }
+        super.update(this._steps[recipeIndex])
     }
     collect(action) {
         let currentStep = this._steps[this._currentActionIndex]

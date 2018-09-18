@@ -56,41 +56,30 @@ class Fishbowl extends Component {
     }
 
     renderAction ({action, link, active}) {
+        let icon
         switch (action.type) {
             case 'promise':
-            return (
-                <Action
-                    state={active ? 'active' : ''}
-                    key={action.id}
-                    link={link}
-                    action={action}
-                    icon='watch_later'
-                />
-            )
+                icon = 'watch_later'
+                break
+
+            case 'event':
+                icon = 'offline_bolt'
+                break
             case 'promise-resolve':
             case 'input':
-                return (
-                    <Action
-                        state={active ? 'active' : ''}
-                        key={action.id}
-                        link={link}
-                        action={action}
-                        icon='done'
-                    />
-                )
-            case 'event':
-            return (
-                <Action
-                    state={active ? 'active' : ''}
-                    key={action.id}
-                    link={link}
-                    action={action}
-                    icon='offline_bolt'
-                />
-            )
             default:
-                return null
+                icon = 'done'
+                break;
         }
+        return (
+            <Action
+                state={active ? 'active' : ''}
+                key={action.id}
+                link={link}
+                action={action}
+                icon={icon}
+            />
+        )
     }
 
     render () {
