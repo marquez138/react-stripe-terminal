@@ -81,7 +81,6 @@ class App extends Component {
     }
 
     render () {
-      console.log(this.props.recipes)
       return (
           <div className="StripePOS" style={{
             margin: 'auto',
@@ -98,7 +97,7 @@ class App extends Component {
                   activationTokenRequestHandler={createPosActivationToken}
                   discoveryTokenRequestHandler={registerDevice}
                   paymentIntentRequestHandler={createIntent}
-                  aquarium={this.state.aquarium}/>
+                  aquarium={this.state.aquarium} />
               </div>
               {this.renderEventLog(this.state.aquarium)}
             </div>
