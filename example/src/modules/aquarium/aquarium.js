@@ -205,6 +205,7 @@ class RecipeCollector extends Collector {
             if (step.actualAction && step.actualAction.id === action.id) {
                 return step
             }
+            return null
         })
         super.update(recipeStep.clone({actualAction: action}))
     }

@@ -53,6 +53,33 @@ class App extends Component {
       }
     }
 
+    renderRecipeSidebar () {
+      if (!this.props.recipes) {
+        return null
+      }
+      return <div className="col s2">
+        <h2>Recipes</h2>
+        {Object.keys(this.props.recipes).map(key => (
+          <div className='box'>
+            <div className='row'>
+              <div className='col s10'>
+                <h4>{this.props.recipes[key].name}</h4>
+              </div>
+              <div className='col s2'>
+                <button
+                  className='btn-rounded right'
+                  onClick={() => this._setRecipeCollector(this.props.recipes[key])}
+                >
+                  <i className='material-icons'>play_circle_filled</i>
+                </button>
+              </div>
+            </div>
+            <p>{this.props.recipes[key].description}</p>
+          </div>
+        ))}
+      </div>
+    }
+
     render () {
       return (
           <div className="StripePOS" style={{
@@ -61,27 +88,7 @@ class App extends Component {
           }}>
             <h1>Stripe Terminal Demo</h1>
             <div className="row">
-              <div className="col s2">
-                <h2>Recipes</h2>
-                {Object.keys(this.props.recipes).map(key => (
-                  <div className='box'>
-                    <div className='row'>
-                      <div className='col s10'>
-                        <h4>{this.props.recipes[key].name}</h4>
-                      </div>
-                      <div className='col s2'>
-                        <button
-                          className='btn-rounded right'
-                          onClick={() => this._setRecipeCollector(this.props.recipes[key])}
-                        >
-                          <i className='material-icons'>play_circle_filled</i>
-                        </button>
-                      </div>
-                    </div>
-                    <p>{this.props.recipes[key].description}</p>
-                  </div>
-                ))}
-              </div>
+              {this.renderRecipeSidebar()}
               <div className="col s5">
                 <POSPayment
                   // You can render static basket items via props or dynamically via addBasketItem

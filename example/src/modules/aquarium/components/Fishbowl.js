@@ -62,6 +62,7 @@ class Fishbowl extends Component {
                 <Action
                     state={active ? 'active' : ''}
                     key={action.id}
+                    link={link}
                     action={action}
                     icon='watch_later'
                 />
@@ -72,6 +73,7 @@ class Fishbowl extends Component {
                     <Action
                         state={active ? 'active' : ''}
                         key={action.id}
+                        link={link}
                         action={action}
                         icon='done'
                     />
@@ -81,6 +83,7 @@ class Fishbowl extends Component {
                 <Action
                     state={active ? 'active' : ''}
                     key={action.id}
+                    link={link}
                     action={action}
                     icon='offline_bolt'
                 />

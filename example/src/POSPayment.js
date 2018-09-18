@@ -34,10 +34,6 @@ class POSPayment extends Component {
         )
     }
 
-    renderEventLog () {
-        this.props.events
-    }
-
     renderBasketItems () {
         return <div className='row item-list'>
             {this.props.stripePos.basketItems.length ? this.props.stripePos.basketItems.map((item, index) =>

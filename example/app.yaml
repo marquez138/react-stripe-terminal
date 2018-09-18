@@ -17,4 +17,16 @@ service: default
 instance_class: B4_1G
 manual_scaling:
   instances: 1
+api_version: 1
+handlers:
+- url: /react-stripe-pos
+  static_files: build/index.html
+  upload: build/index.html
+- url: /react-stripe-pos
+  static_dir: build
+- url: /
+  static_files: build/index.html
+  upload: build/index.html
+- url: /
+  static_dir: build
 # [END runtime]

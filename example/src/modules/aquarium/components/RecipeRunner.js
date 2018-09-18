@@ -2,7 +2,6 @@ import React from 'react'
 import Fishbowl from './Fishbowl'
 import CodeBlock from './CodeBlock'
 import {RecipeStep, Aquarium} from '../aquarium'
-import getValue from 'get-value'
 import setValue from 'set-value'
 
 class RecipeRunner extends Fishbowl {
@@ -99,6 +98,7 @@ class RecipeRunner extends Fishbowl {
                     actionIcon = recipeStep.actualAction.error ? 'error' : 'watch_later'
                     break
                 case Aquarium.VALID_ACTION_TYPES.PROMISE_RESOLVE:
+                default:
                     actionIcon = 'done'
                     break
             }
@@ -108,7 +108,7 @@ class RecipeRunner extends Fishbowl {
             <div className={`row box recipeStep-item ${statusStyleClass}`} key={recipeStep.id}>
                 <p>
                 <i className='material-icons'>{statusIcon}</i>
-                    <a target="_blank" href={link}></a><strong>{`Step ${step}: ${recipeStep.description}`}</strong>
+                    <strong>{`Step ${step}: ${recipeStep.description}`}</strong>
                 </p>
                 <i>SDK API: <i className='material-icons'>{actionIcon}</i><a target="_blank" href={link}><strong>{recipeStep.actualAction && recipeStep.actualAction.name
                     ? recipeStep.actualAction.name  : recipeStep.name}</strong></a></i>

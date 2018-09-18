@@ -14,37 +14,118 @@ $input-shadow-color: #e6ebf1;
 $section-shadow-color: #cfd7df;
 $border-radius: 4px;
 $basket-height: 300px;
+$animations-duration: 0.25s;
 
 .StripePOS {
-  // transitions - trusty SO reference https://stackoverflow.com/questions/11660710/css-transition-fade-in
+  i.material-icons {
+    font-size: 20px;
+  }
   .fade-in {
-      opacity: 1;
-      animation-name: fade-in-opacity;
-      animation-iteration-count: 1;
-      animation-timing-function: ease-in;
-      animation-duration: .25s;
+    opacity: 1;
+    animation-name: fade-in-opacity;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: $animations-duration;
+  }
+  @keyframes fade-in-opacity {
+    0% {
+      opacity: 0
     }
-    @keyframes fade-in-opacity {
-      0% {
-        opacity: 0
-      }
-      100% {
-        opacity: 1
-      }
+    100% {
+      opacity: 1
     }
+  }
+  .height-expand-in {
+    height: auto;
+    animation: height-expand;
+  }
+  @keyframes height-expand {
+    0% {
+      height: initial;
+    }
+    100% {
+      height: auto;
+    }
+  }
   .Fishbowl {
     overflow-y: auto;
     max-height: ($basket-height + 400px);
     .code-block {
       pre {
         border-radius: 5px;
+        code {
+          font-size: 14px;
+          span {
+            font-size: 14px;
+            line-height: 14px;
+          }
+        }
       }
     }
     .action-item {
       @extend .fade-in
     }
+    .hidden {
+      display: none;
+    }
+    .rotated {
+      transform: rotate(90deg);
+      animation: rotate-right-90 $animations-duration;
+    }
+    .not-rotated {
+      transform: rotate(0deg);
+      animation: rotate-left-90 $animations-duration;
+    }
+    @keyframes rotate-left-90 {
+      0% {
+        transform: rotate(90deg)
+      }
+      100% {
+        transform: rotate(0deg)
+      }
+    }
+    @-moz-keyframes rotate-left-90 {
+      0% {
+        transform: rotate(90deg)
+      }
+      100% {
+        transform: rotate(0deg)
+      }
+    }
+    @-webkit-keyframes rotate-left-90 {
+      0% {
+        transform: rotate(90eg)
+      }
+      100% {
+        transform: rotate(0deg)
+      }
+    }
+    @keyframes rotate-right-90 {
+      0% {
+        transform: rotate(0deg)
+      }
+      100% {
+        transform: rotate(90deg)
+      }
+    }
+    @-moz-keyframes rotate-right-90 {
+      0% {
+        transform: rotate(0deg)
+      }
+      100% {
+        transform: rotate(90deg)
+      }
+    }
+    @-webkit-keyframes rotate-right-90 {
+      0% {
+        transform: rotate(0deg)
+      }
+      100% {
+        transform: rotate(90deg)
+      }
+    }
   }
-  
+
   font-family: "Helvetica Neue", Helvetica, sans-seankrif;
   span {
     font-size: 18px;
@@ -74,6 +155,10 @@ $basket-height: 300px;
     background-color: $extra-action-color;
   }
   .box {
+    transition: transform 0.3s ease-out;
+    transform: scaleY(1);
+    height: auto;
+    transform-origin: top;
     margin: 10px;
     color: $secondary-text-color;
     line-height: 18px;
@@ -176,5 +261,10 @@ $basket-height: 300px;
     padding-right: 5px;
     color: white;
     background-color: color('red', 'lighten-2')
+  }
+  .row {
+    div {
+      margin-bottom: 2px;
+    }
   }
 }
