@@ -108,7 +108,7 @@ class RecipeStep extends Action {
         status,
         diff
     }) {
-        super({id, name, subjectName, subjectName, args, type})
+        super({id, name, subjectName, args, type})
         this._description = description
         this._requiredMatchParameters = requiredMatchParameters
         this._status = RecipeStep.STATUS.UNATTEMPTED
