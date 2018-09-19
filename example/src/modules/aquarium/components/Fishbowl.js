@@ -88,7 +88,7 @@ class Fishbowl extends Component {
                 {this.state.actionLog.map(action => this.renderAction({
                   action,
                   // TODO update when we go open source
-                  link: `https://git.corp.stripe.com/stripe-internal/react-stripe-pos/search?l=javascript&q="${action.subjectName}.${action.name}"&type=Code`,
+                  link: `https://git.corp.stripe.com/stripe-internal/react-stripe-pos/search?l=javascript&q="${action.name}"&type=Code`,
                   active: Date.now() - action.timestamp < this.props.eventTimeGroupingGranularity}))
                 }
                 <div ref={el => this.eventEndDiv = el}>

@@ -13,14 +13,14 @@ discoverReaders:
       type: promise
     -
       description: Stripe Terminal SDK calls the onActivationToken handler (implemented by your code) to fetch a reader activation token. THis should return a promise
-      name: onGetActivationToken
+      name: onFetchConnectionToken
       args: []
       requiredMatchParameters:
         - name
       type: event
     -
-      description: Your onGetActivationToken handler returns a promise, and now the SDK will discover readers for your Stripe account
-      name: onGetActivationToken
+      description: Your onFetchConnectionToken handler returns a promise, and now the SDK will discover readers for your Stripe account
+      name: onFetchConnectionToken
       args: []
       requiredMatchParameters:
         - type

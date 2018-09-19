@@ -1,4 +1,4 @@
-class Basket {
+class ReaderDisplay {
     constructor({terminal, component}) {
         this._terminal = terminal
         this._component = component
@@ -9,88 +9,77 @@ class Basket {
             return this.props.computeBasketTotals(items)
         }
         // default implementation
-        const total = items.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0)
+        const total = items.reduce((accumulator, currentItem) => accumulator + currentItem.amount, 0)
         const tax = parseFloat((total * this._component.props.taxRate).toFixed(2))
         return {
             total,
             tax,
-            balanceDue: tax + total
+            currency: this._component.props.currency,
+            balanceDue: total + tax
         }
     }
-    async setCart () {
+    async setReaderDisplay () {
         if (this._component.state.connectionStatus !== 'connected') {
             // if we aren't connected do not touch the basket
             return
         }
-        this._terminal.beginCheckout({
-            // TODO figure out experience for client app to provide unique basket ID
-            transactionId: 'some-id'
-        })
         this._terminal.setCart({
             cart: {
-                lineItems: this._component.state.basketItems
+                lineItems: this._component.state.lineItems
             },
-            totals: this.computeBasketTotals(this._component.state.basketItems)
+            ...this.computeBasketTotals(this._component.state.lineItems)
         })
     }
-    async addBasketItem (basketItem) {
+    async addLineItem (lineItem) {
         if (this._component.state.connectionStatus !== 'connected') {
             // if we aren't connected do not touch the basket
             return
         }
-        if (this._component.state.basketItems.length === 0) {
-            let result = await this._terminal.beginCheckout({
-                transactionId: 'some-id' // TODO how should we generate these?
-            })
-            if (result.error) {
-                this._component.setState({ error: result.error })
-            }
-        }
-        const newItems = [...this._component.state.basketItems, basketItem]
+        const newItems = [...this._component.state.lineItems, lineItem]
         this._component.setState({
-            basketItems: newItems,
-            totals: this.computeBasketTotals(newItems)
+            lineItems: newItems,
+            ...this.computeBasketTotals(newItems)
         }, async () => {
             // TODO - The API docs are missing how to handle an errors here
-            let response = await this._terminal.setCart({
+            let response = await this._terminal.setReaderDisplay({
                 cart: {
-                    lineItems: this._component.state.basketItems
+                    lineItems: this._component.state.lineItems
                 },
-                totals: this._component.state.totals
+                ...this._component.state.totals
             })
             if (response.error) {
                 this._component.setState({ error: response.error })
             }
         })
     }
-    clearBasket = async () => {
+    clearReaderDisplay = async () => {
         if (this._component.state.connectionStatus !== 'connected') {
             // if we aren't connected do not touch the basket
             return
         }
         const newItems = []
         this._component.setState({
-            basketItems: [],
-            totals: this.computeBasketTotals(newItems)
+            lineItems: [],
+            ...this.computeBasketTotals(newItems)
         })
-        await this._terminal.endCheckout()
+        await this._terminal.clearReaderDisplay()
     }
-    removeBasketItem = index => {
+    removeLineItem = index => {
         if (this._component.state.connectionStatus !== 'connected') {
             // if we aren't connected do not touch the basket
             return
         }
-        const newItems = this._component.state.basketItems.filter((_, i) => i !== index)
+        const newItems = this._component.state.lineItems.filter((_, i) => i !== index)
         this._component.setState({
-            basketItems: newItems,
-            totals: this.computeBasketTotals(newItems)
+            lineItems: newItems,
+            ...this.computeBasketTotals(newItems)
         }, () => {
-            if (this._component.state.basketItems.length === 0) {
+            if (this._component.state.lineItems.length === 0) {
                 return this._terminal.endCheckout()
             }
-            this._terminal.setCart({
+            this._terminal.setReaderDisplay({
                 cart: {
-                    lineItems: this._component.state.basketItems
+                    lineItems: this._component.state.lineItems
                 },
                 totals: this._component.state.totals
             })
@@ -98,4 +87,4 @@ class Basket {
     }
 }
 
-export default Basket
+export default ReaderDisplay

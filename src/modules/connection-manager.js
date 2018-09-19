@@ -10,7 +10,7 @@ class ConnectionManager {
         this._component.setState({
             connecting: true
         })
-        let connection = await this._terminal.connect(reader)
+        let connection = await this._terminal.connectReader(reader)
         if (connection.error) {
             return this._component.setState({ error: connection.error, connecting: false })
         }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import POSDevice from 'react-stripe-pos';
+import Terminal from 'react-stripe-terminal';
 
-class POSPayment extends Component {
+class POSApp extends Component {
 
     renderConnectionDialog () {
         return (
@@ -36,7 +36,7 @@ class POSPayment extends Component {
 
     renderBasketItems () {
         return <div className='row item-list'>
-            {this.props.stripePos.basketItems.length ? this.props.stripePos.basketItems.map((item, index) =>
+            {this.props.stripePos.lineItems.length ? this.props.stripePos.lineItems.map((item, index) =>
                 <div className='list-item' key={`stripe-pos-item-${index}`}>
                     <div className='row'>
                         <div className='col s8'>
@@ -45,7 +45,7 @@ class POSPayment extends Component {
                             <p>Amount: ${(item.totalPrice / 100).toFixed(2)}</p>
                         </div>
                         <div className='col s4'>
-                            <button disabled={this.props.stripePos.connectionStatus !== 'connected'} className='btn red right' onClick={() => this.props.stripePos.removeBasketItem(index)}>Remove</button>
+                            <button disabled={this.props.stripePos.connectionStatus !== 'connected'} className='btn red right' onClick={() => this.props.stripePos.removeLineItem(index)}>Remove</button>
                         </div>
                     </div>
                 </div>)
@@ -70,24 +70,23 @@ class POSPayment extends Component {
                 {this.renderBasketItems()}
                 <div className='row'>
                     <div className='col s6 right'>
-                        <p>Sub Total: ${(this.props.stripePos.totals.total / 100).toFixed(2)}</p>
-                        <p>Tax: ${(this.props.stripePos.totals.tax / 100).toFixed(2)}</p>
-                        <p>Total: ${(this.props.stripePos.totals.balanceDue / 100).toFixed(2)}</p>
+                        <p>Sub Total: ${(this.props.stripePos.total / 100).toFixed(2)}</p>
+                        <p>Tax: ${(this.props.stripePos.tax / 100).toFixed(2)}</p>
+                        <p>Total: ${(this.props.stripePos.balanceDue / 100).toFixed(2)}</p>
                     </div>
                     <div className='col s6'>
                         <div className="row">
-                            <button disabled={this.props.stripePos.connectionStatus !== 'connected'} className='btn green' onClick={() => this.props.stripePos.addBasketItem({
+                            <button disabled={this.props.stripePos.connectionStatus !== 'connected'} className='btn green' onClick={() => this.props.stripePos.addLineItem({
                                 description: 'Silver Hat',
-                                totalPrice: 2000,
-                                unitPrice: 1000,
+                                amount: 2000,
                                 quantity: 2
                             })}>Add Item</button>
                         </div>
                         <div className="row">
                             <button disabled={this.props.stripePos.connectionStatus !== 'connected'} onClick={() => this.props.stripePos.createPayment({
-                                amount: this.props.stripePos.totals.balanceDue,
+                                amount: this.props.stripePos.balanceDue,
                                 description: 'Purchase'
-                            })} className='btn'>Create ${(this.props.stripePos.totals.balanceDue / 100).toFixed(2)} Charge</button>
+                            })} className='btn'>Create ${(this.props.stripePos.balanceDue / 100).toFixed(2)} Charge</button>
                         </div>
                     </div>
                 </div>
@@ -116,5 +115,5 @@ class POSPayment extends Component {
     }
 }
 
-export default POSDevice(POSPayment)
+export default Terminal(POSApp)
 
