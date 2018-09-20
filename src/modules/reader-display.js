@@ -60,7 +60,6 @@ class ReaderDisplay {
             // if we aren't connected do not touch the basket
             return
         }
-        const newItems = []
         this._component.setState({
             lineItems: [],
             tax: 0,
