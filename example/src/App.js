@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {createPosActivationToken, registerDevice, createIntent} from './APIClient';
-import POSPayment from './POSPayment'
+import POSApp from 'react-stripe-terminal/example/src/POSApp'
 import {Aquarium, RecipeRunner, Fishbowl, RecipeCollector, RecipeStep, Collector} from './modules/aquarium'
 
 class App extends Component {
@@ -90,9 +90,10 @@ class App extends Component {
             <div className="row">
               {this.renderRecipeSidebar()}
               <div className="col s5">
-                <POSPayment
+                <POSApp
                   // You can render static basket items via props or dynamically via addBasketItem
                   basketItems={[]}
+                  currency='usd'
                   taxRate={0.07}
                   activationTokenRequestHandler={createPosActivationToken}
                   discoveryTokenRequestHandler={registerDevice}
