@@ -61,7 +61,6 @@ function Terminal(WrappedComponent) {
             const terminal = TerminalFactory.GetOrCreateTerminal({
                 // devMode: 'CANARY',
                 onFetchConnectionToken: this.props.activationTokenRequestHandler,
-                onReaderDisconnect: this._connectionManager.onDisconnect,
                 onConnectionStatusChange: this._connectionManager.handleConnectionStatusChange,
                 onPaymentStatusChange: this._connectionManager.handlePaymentStatusChange,
                 onUnexpectedReaderDisconnect: this._connectionManager.handleUnexpectedReaderDisconnect,

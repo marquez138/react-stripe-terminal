@@ -14,8 +14,7 @@ class ReaderDisplay {
         return {
             total,
             tax,
-            currency: this._component.props.currency,
-            balanceDue: total + tax
+            currency: this._component.props.currency
         }
     }
     async setReaderDisplay () {
@@ -23,11 +22,12 @@ class ReaderDisplay {
             // if we aren't connected do not touch the basket
             return
         }
-        this._terminal.setCart({
+        this._terminal.setReaderDisplay({
             cart: {
-                lineItems: this._component.state.lineItems
+                lineItems: this._component.state.lineItems,
+                ...this.computeBasketTotals(this._component.state.lineItems)
             },
-            ...this.computeBasketTotals(this._component.state.lineItems)
+            type: 'cart'
         })
     }
     async addLineItem (lineItem) {
@@ -36,16 +36,19 @@ class ReaderDisplay {
             return
         }
         const newItems = [...this._component.state.lineItems, lineItem]
+        const totals = this.computeBasketTotals(newItems)
         this._component.setState({
             lineItems: newItems,
-            ...this.computeBasketTotals(newItems)
+            ...totals,
+            balanceDue: totals.tax + totals.total
         }, async () => {
             // TODO - The API docs are missing how to handle an errors here
             let response = await this._terminal.setReaderDisplay({
                 cart: {
-                    lineItems: this._component.state.lineItems
+                    lineItems: this._component.state.lineItems,
+                    ...this.computeBasketTotals(this._component.state.lineItems)
                 },
-                ...this._component.state.totals
+                type: 'cart'
             })
             if (response.error) {
                 this._component.setState({ error: response.error })
@@ -60,7 +63,9 @@ class ReaderDisplay {
         const newItems = []
         this._component.setState({
             lineItems: [],
-            ...this.computeBasketTotals(newItems)
+            tax: 0,
+            total: 0,
+            balanceDue: 0
         })
         await this._terminal.clearReaderDisplay()
     }
@@ -70,18 +75,21 @@ class ReaderDisplay {
             return
         }
         const newItems = this._component.state.lineItems.filter((_, i) => i !== index)
+        const totals = this.computeBasketTotals(newItems)
         this._component.setState({
             lineItems: newItems,
-            ...this.computeBasketTotals(newItems)
+            balanceDue: totals.tax + totals.total,
+            ...totals
         }, () => {
             if (this._component.state.lineItems.length === 0) {
                 return this._terminal.endCheckout()
             }
             this._terminal.setReaderDisplay({
                 cart: {
-                    lineItems: this._component.state.lineItems
+                    lineItems: this._component.state.lineItems,
+                    ...this.computeBasketTotals(this._component.state.lineItems)
                 },
-                totals: this._component.state.totals
+                type: 'cart'
             })
         })
     }

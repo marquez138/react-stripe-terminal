@@ -13,7 +13,7 @@ class POSApp extends Component {
                             <div className="col s8 reader-name">
                                 <strong>{reader.label}</strong>
                                 <p>{reader.ip_address}</p>
-                                <p>Device: {reader.device_type}</p>
+                                <p>Device: {reader.device_type} <i>({reader.status})</i></p>
                                 <p>Device ID: {reader.id}</p>
                                 <p>Serial#: {reader.serial_number}</p>
                             </div>
@@ -40,9 +40,9 @@ class POSApp extends Component {
                 <div className='list-item' key={`stripe-pos-item-${index}`}>
                     <div className='row'>
                         <div className='col s8'>
-                            <strong>Description: {item.description}</strong>
-                            <p>Price: ${(item.unitPrice / 100).toFixed(2)} each</p>
-                            <p>Amount: ${(item.totalPrice / 100).toFixed(2)}</p>
+                            <strong>Description: {item.description} x{item.quantity}</strong>
+                            <p>Price: ${(item.amount / 100).toFixed(2)} each</p>
+                            <p>Amount: ${((item.amount * item.quantity) / 100).toFixed(2)}</p>
                         </div>
                         <div className='col s4'>
                             <button disabled={this.props.stripePos.connectionStatus !== 'connected'} className='btn red right' onClick={() => this.props.stripePos.removeLineItem(index)}>Remove</button>
@@ -94,7 +94,7 @@ class POSApp extends Component {
                 <div className='row'>
                     <div className='col s8'>
                         <h3>Device Status: {this.props.stripePos.connectionStatus}</h3>
-                        {this.props.stripePos.connectionStatus === 'connected' ? <h3>Payment Status: {this.props.stripePos.paymentStatus}</h3> : null}
+                        {this.props.stripePos.connectionStatus === 'connected' && this.props.stripePos.paymentStatus ? <h3>Payment Status: {this.props.stripePos.paymentStatus}</h3> : null}
                     </div>
                     <div className='col s4'>
                         <button disabled={!this.props.stripePos.connection} className='btn red right' onClick={() => this.props.stripePos.disconnectReader()}>Disconnect</button>

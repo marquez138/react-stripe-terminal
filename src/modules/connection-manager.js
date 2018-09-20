@@ -20,7 +20,7 @@ class ConnectionManager {
         return this._component.setState({ connection })
     }
     async disconnectReader () {
-        await this._terminal.disconnect()
+        await this._terminal.disconnectReader()
         this._component.setState({
             connection: null
         })

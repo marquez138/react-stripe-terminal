@@ -6,7 +6,6 @@
 class Terminal {
     constructor({
         onFetchConnectionToken,
-        onReaderDisconnect,
         onConnectionStatusChange,
         onPaymentStatusChange,
         onUnexpectedReaderDisconnect,
@@ -27,7 +26,6 @@ class Terminal {
             // wrap the handlers for tracing as well
             this._terminal = StripeTerminal.create({
                 onFetchConnectionToken: this._aquarium.watchAction(this.onFetchConnectionToken(onFetchConnectionToken), 'event'),
-                onReaderDisconnect: this._aquarium.watchAction(this.onReaderDisconnect(onReaderDisconnect), 'event'),
                 onConnectionStatusChange: this._aquarium.watchAction(this.onConnectionStatusChange(onConnectionStatusChange), 'event'),
                 onPaymentStatusChange: this._aquarium.watchAction(this.onPaymentStatusChange(onPaymentStatusChange), 'event'),
                 onUnexpectedReaderDisconnect: this._aquarium.watchAction(this.onUnexpectedReaderDisconnect(onUnexpectedReaderDisconnect), 'event')
@@ -35,7 +33,6 @@ class Terminal {
         } else {
             this._terminal = StripeTerminal.create({
                 onFetchConnectionToken: this.onFetchConnectionToken(onFetchConnectionToken),
-                onReaderDisconnect: this.onReaderDisconnect(onReaderDisconnect),
                 onConnectionStatusChange: this.onConnectionStatusChange(onConnectionStatusChange),
                 onPaymentStatusChange: this.onPaymentStatusChange(onPaymentStatusChange),
                 onUnexpectedReaderDisconnect: this.onUnexpectedReaderDisconnect(onUnexpectedReaderDisconnect)
@@ -52,10 +49,6 @@ class Terminal {
     onFetchConnectionToken (handler) {
         let onFetchConnectionToken = posDeviceId => handler(posDeviceId)
         return onFetchConnectionToken
-    }
-    onReaderDisconnect (handler) {
-        let onReaderDisconnect = event => handler(event)
-        return onReaderDisconnect
     }
     onConnectionStatusChange (handler) {
         let onConnectionStatusChange = (event) => handler(event)
@@ -76,8 +69,8 @@ class Terminal {
      * We could collapse these into a general wrapper function, but making explicit static
      * functions helps with readability of the SDK usage
      */
-    async disconnect() {
-        const result = await this._terminal.disconnect()
+    async disconnectReader() {
+        const result = await this._terminal.disconnectReader()
         return result
     }
 
@@ -121,7 +114,6 @@ class Terminal {
 class TerminalFactory {
     static GetOrCreateTerminal({
         onFetchConnectionToken,
-        onReaderDisconnect,
         onConnectionStatusChange,
         onPaymentStatusChange,
         onUnexpectedReaderDisconnect,
@@ -133,7 +125,6 @@ class TerminalFactory {
         }
         this._terminal = new Terminal({
             onFetchConnectionToken,
-            onReaderDisconnect,
             onConnectionStatusChange,
             onPaymentStatusChange,
             onUnexpectedReaderDisconnect,
