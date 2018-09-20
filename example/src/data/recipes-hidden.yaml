@@ -1,10 +1,11 @@
+# TODO - Add production recipes when ready
 ---
 discoverReaders:
   name: 'Discover Readers'
   description: 'Discover available readers that you can connect to with the Terminal SDK.'
   steps:
     -
-      description: Learn to discover your card reader(s) by using the terminal.discoverReaders method.
+      description: Discover your card reader(s) by using the terminal.discoverReaders method.
       name: discoverReaders
       args: []
       requiredMatchParameters:
@@ -29,9 +30,14 @@ discoverReaders:
       description: Using the activation token, terminal.discoverReaders returns with the list of available readers to connect to.
       name: discoverReaders
       args: []
+      response:
+        discoveredReaders:
+          object: terminal.reader
+          status: offline
       requiredMatchParameters:
         - type
         - name
+        - response
       type: promise-resolve
 connect:
   name: 'Connect to Reader'
@@ -46,6 +52,7 @@ connect:
       requiredMatchParameters:
         - type
         - name
+        - args.0.object
       type: promise
     -
       description: The Stripe SDK will call your onConnectionStatusChange handler. Use this to display updates to the Terminal connection status.
@@ -56,7 +63,7 @@ connect:
       requiredMatchParameters:
         - type
         - name
-        - args
+        - args.0.status
       type: event
     -
       description: The Stripe SDK will call your onConnectionStatusChange handler when the Terminal is connected
@@ -67,7 +74,7 @@ connect:
       requiredMatchParameters:
         - type
         - name
-        - args
+        - args.0.status
       type: event
     - description: terminal.connect's promise resolves with a reader object.
       name: connect
@@ -77,5 +84,57 @@ connect:
       requiredMatchParameters:
         - type
         - name
-        - args
+        - args.0.object
+      type: promise-resolve
+addItem:
+  name: 'Add 3 Line Items'
+  description: 'See how to add 3 line items to the Stripe Terminal Device'
+  steps:
+    -
+      description: Call terminal.beginCheckout with a Cart Object
+      name: beginCheckout
+      args:
+        -
+          transactionId: 'some-id'
+      requiredMatchParameters:
+        - type
+        - name
+        - args.0.transactionId
+      type: promise
+    -
+      description: Call terminal.setCart with the Cart object that contains the line items you want to display.
+      name: setCart
+      args:
+        -
+          cart:
+            lineItems:
+              - description: Silver Hat
+              - totalPrice: 2000
+              - unitPrice: 1000
+              - quantity: 2
+          totals:
+            total: 2000
+            tax: 140
+            balanceDue: 2140
+      requiredMatchParameters:
+        - type
+        - name
+        - args.0.lineItems
+        - args.0.totals
+      type: promise
+    -
+      description: Call terminal.beginCheckout with a Cart Object
+      name: beginCheckout
+      args: []
+      requiredMatchParameters:
+        - type
+        - name
+      type: promise-resolve
+    -
+      description: terminal.setCart will resolve with a promise either contains an empty object ({}) or an error
+      name: setCart
+      args: []
+      requiredMatchParameters:
+        - type
+        - name
       type: promise-resolve
