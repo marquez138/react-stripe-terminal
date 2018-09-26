@@ -61,10 +61,16 @@ class ReaderDisplay {
             return
         }
         this._component.setState({
-            lineItems: [],
-            tax: 0,
-            total: 0,
-            balanceDue: 0
+            payment: {
+                lineItems: [],
+                tax: 0,
+                total: 0,
+                balanceDue: 0,
+                status: null,
+                error: null,
+                paymentIntent: null,
+                paymentMethod: null
+            }
         })
         await this._terminal.clearReaderDisplay()
     }
@@ -75,11 +81,14 @@ class ReaderDisplay {
         }
         const newItems = this._component.state.lineItems.filter((_, i) => i !== index)
         const totals = this.computeBasketTotals(newItems)
-        this._component.setState({
-            lineItems: newItems,
-            balanceDue: totals.tax + totals.total,
-            ...totals
-        }, () => {
+        this._component.setState(state => ({
+            payment: {
+                ...state.payment,
+                lineItems: newItems,
+                balanceDue: totals.tax + totals.total,
+                ...totals
+            }
+        }), () => {
             if (this._component.state.lineItems.length === 0) {
                 return this._terminal.endCheckout()
             }

@@ -36,15 +36,21 @@ function Terminal(WrappedComponent) {
         state = {
             terminal: null,
             connectionStatus: 'disconnected',
-            payments: [],
+            connecting: false,
+            connection: {
+                status: 'not_connected',
+                reader: null
+            },
             discoveredReaders: [],
             error: null,
-            lineItems: this.props.lineItems || [],
-            // TODO: This is basically computeBasketTotals but because it isn't static it can't be called here
-            total: this.props.lineItems.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0),
-            tax: parseFloat(((this.props.lineItems.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0)) * (this.props.taxRate)).toFixed(2)),
-            balanceDue: this.props.lineItems.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0) +
-                parseFloat(((this.props.lineItems.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0)) * (this.props.taxRate)).toFixed(2))
+            payment: {
+                lineItems: this.props.lineItems || [],
+                // TODO: This is basically computeBasketTotals but because it isn't static it can't be called here
+                total: this.props.lineItems.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0),
+                tax: parseFloat(((this.props.lineItems.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0)) * (this.props.taxRate)).toFixed(2)),
+                balanceDue: this.props.lineItems.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0) +
+                    parseFloat(((this.props.lineItems.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0)) * (this.props.taxRate)).toFixed(2))
+            }
         }
 
         async connectToReader (reader) {
@@ -75,22 +81,21 @@ function Terminal(WrappedComponent) {
 
         render() {
             const props = {...Object.assign({}, this.props, {
-                stripePos: {
+                stripeTerminal: {
                     ...this.state,
                     addLineItem: readerDisplayItem => this._readerDisplay.addLineItem(readerDisplayItem),
                     connectToReader: reader => this.connectToReader(reader),
                     disconnectReader: reader => this._connectionManager.disconnectReader(), 
                     removeLineItem: index => this._readerDisplay.removeLineItem(index),
-                    discoverReaders: registrationToken => this._readerDiscovery.discoverReaders({registrationToken}),
+                    discoverReaders: ({registrationToken, options}) => this._readerDiscovery.discoverReaders({registrationToken, options}),
                     createPayment: options => this._paymentCreator.createPayment({...options})
                 }
             })}
-            // Wraps the input component in a container adding POS specifics
-            // to `this.props.stripePos`
+            // Wraps the input component in a container adding Stripe Terminal state as
+            // read-only props to `this.props.stripeTerminal`
             return <WrappedComponent
                 {...props} />
         }
     }
 }
 
-export default Terminal

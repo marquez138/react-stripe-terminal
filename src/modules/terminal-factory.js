@@ -79,8 +79,8 @@ class Terminal {
         return result
     }
 
-    async discoverReaders () {
-        const result = await this._terminal.discoverReaders()
+    async discoverReaders ({discoveryOptions}) {
+        const result = await this._terminal.discoverReaders(discoveryOptions)
         return result
     }
 

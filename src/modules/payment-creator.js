@@ -1,3 +1,4 @@
+import ConnectionManager from './connection-manager'
 class PaymentCreator {
     constructor({component, terminal}) {
         this._component = component
@@ -5,7 +6,7 @@ class PaymentCreator {
     }
     // TODO do we want to handle the actual payment creation? :-/
     createPayment = async ({amount, description}) => {
-        if (this._component.state.connectionStatus !== 'connected') {
+        if (this._component.state.connection.status !== ConnectionManager.CONNECTION_STATE.CONNECTED) {
             // if we aren't connected do not touch the basket
             return
         }
@@ -31,8 +32,6 @@ class PaymentCreator {
                 error: confirmedIntentError
             })
         }
-        console.log('Confirmed Intent:')
-        console.log(confirmedIntent)
     }
 }
 
