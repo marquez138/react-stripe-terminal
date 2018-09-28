@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {createPosActivationToken, registerDevice, createIntent} from './APIClient';
 import POSApp from 'react-stripe-terminal/example/src/POSApp'
-import {Aquarium, RecipeRunner, Fishbowl, RecipeCollector, RecipeStep, Collector} from './modules/aquarium'
+import {Aquarium, RecipeRunner, Fishbowl, RecipeCollector, RecipeStep, Collector} from 'react-aquarium'
 
 class App extends Component {
     state = {

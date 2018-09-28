@@ -12,16 +12,20 @@ class ConnectionManager {
         this._terminal = term
     }
     connectReader = async (reader) => {
-        this._component.setState({
-            connecting: true
-        })
+        this._component.setState(state => ({
+            connection: {
+                ...state.connection,
+                connectingToReader: reader.id,
+                reader
+            }
+        }));
         let connection = await this._terminal.connectReader(reader)
         if (connection.error) {
-            return this._component.setState({
+            return this._component.setState(state => ({
                 error: connection.error,
-                connecting: false,
+                connectingToReader: null,
                 connection: null
-            })
+            }))
         }
         this._component.setState({
             connecting: false
@@ -29,6 +33,7 @@ class ConnectionManager {
         return this._component.setState(state => ({
             connection: {
                 ...state.connection,
+                connectingToReader: null,
                 reader
             }
         }))
@@ -68,11 +73,6 @@ class ConnectionManager {
     }
     handleUnexpectedReaderDisconnect = ev => {
         this.onDisconnect(ev)
-    }
-    handlePaymentStatusChange = ev => {
-        this._component.setState({
-            paymentStatus: ev.status
-        })
     }
 }
 
