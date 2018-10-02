@@ -1,4 +1,6 @@
 /* globals StripeTerminal */
+/* eslint react/no-unused-prop-types: 0 */
+
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import TerminalFactory from './modules/terminal-factory'
@@ -9,16 +11,15 @@ import ReaderDisplay from './modules/reader-display'
 
 const { Provider, Consumer } = React.createContext();
 
-export class CreateStripeTerminalContext extends Component {
+export class StripeTerminalProvider extends Component {
 
     static propTypes = {
-        onFetchConnectionToken: PropTypes.func,
-        registerReaderHandler: PropTypes.func,
-        onPaymentIntentRequest: PropTypes.func,
+        onFetchConnectionToken: PropTypes.func.isRequired,
+        children: PropTypes.func.component,
+        onRegisterReader: PropTypes.func.isRequired,
+        onPaymentIntentRequest: PropTypes.func.isRequired,
         computeBasketTotals: PropTypes.func,
         onCapturePaymentIntent: PropTypes.func,
-        // Temporary until we get the discovery client-side in
-        ipAddress: PropTypes.string,
         taxRate: PropTypes.number,
         discoveryToken: PropTypes.string,
         lineItems: PropTypes.arrayOf(PropTypes.shape({
@@ -49,23 +50,14 @@ export class CreateStripeTerminalContext extends Component {
         error: null,
         payment: {
             lineItems: this.props.lineItems || [],
-            // TODO: This is basically computeBasketTotals but because it isn't static it can't be called here
-            total: this.props.lineItems.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0),
-            tax: parseFloat(((this.props.lineItems.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0)) * (this.props.taxRate)).toFixed(2)),
-            balanceDue: this.props.lineItems.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0) +
-                parseFloat(((this.props.lineItems.reduce((accumulator, currentItem) => accumulator + currentItem.totalPrice, 0)) * (this.props.taxRate)).toFixed(2))
+            subtotal: 0,
+            tax: 0,
+            balanceDue: 0
         }
     }
 
-    async connectReader (reader) {
-        await this._connectionManager.connectReader(reader)
-
-        if (this.state.payment.lineItems.length) {
-            await this._readerDisplay.setCart()
-        }
-    }
-
-    componentDidMount() {
+    constructor (props) {
+        super(props)
         this._connectionManager = new ConnectionManager({component: this})
         this._paymentCreator = new PaymentCreator({component: this})
         const terminal = TerminalFactory.GetOrCreateTerminal({
@@ -83,19 +75,24 @@ export class CreateStripeTerminalContext extends Component {
         this._readerDiscovery = new ReaderDiscover({terminal, component: this})
     }
 
+    async connectReader (reader) {
+        await this._connectionManager.connectReader(reader)
+    }
+
     render() {
         const terminalState = {
             ...this.state,
-            addOrCreateLineItem: readerDisplayItem => this._readerDisplay.addOrCreateLineItem(readerDisplayItem),
+            addLineItem: (readerDisplayItem, addQuantity) => this._readerDisplay.addLineItem({lineItem: readerDisplayItem, addQuantity}),
+            removeLineItem: readerDisplayItem => this._readerDisplay.removeLineItem({lineItem: readerDisplayItem}),
+            getLineItem: id => this._readerDisplay.getLineItem(id),
             connectReader: reader => this.connectReader(reader),
             disconnectReader: reader => this._connectionManager.disconnectReader(reader),
-            removeLineItem: id => this._readerDisplay.removeLineItem(id),
-            clearReaderDisplay: () => this._readerDisplay.clearReaderDisplay(),
-            discoverReaders: ({discoveryOptions = {}} = {}) => this._readerDiscovery.discoverReaders({discoveryOptions}),
-            startDiscoverReaders: ({discoveryOptions = {}} = {}) => this._readerDiscovery.startDiscoverReaders({discoveryOptions}),
+            clearPayment: () => this._readerDisplay.clearPayment(),
+            discoverReaders: discoveryOptions => this._readerDiscovery.discoverReaders({discoveryOptions}),
+            startDiscoverReaders: discoveryOptions => this._readerDiscovery.startDiscoverReaders({discoveryOptions}),
             stopDiscoverReaders: ({discoveryOptions = {}} = {}) => this._readerDiscovery.stopDiscoverReaders({discoveryOptions}),
-            registerReader: options => this._readerDiscovery.registerReader(options),
-            createPayment: ({paymentIntentOptions = {}, capture = false} = {paymentIntentOptions: {}, capture: false}) =>
+            onRegisterReader: options => this._readerDiscovery.registerReader(options),
+            createPayment: ({paymentIntentOptions = {}, capture = false}) =>
                 this._paymentCreator.createPayment({paymentIntentOptions, capture}),
             cancelCreatePayment: () => this._paymentCreator.cancelCreatePayment()
         }
@@ -109,11 +106,11 @@ export class CreateStripeTerminalContext extends Component {
     }
 }
 
-export const WithStripeTerminal = Consumer
-export const StripeTerminalContext = (WrappedComponent) => props => {
+export const InjectStripeTerminal = Consumer
+export const injectStripeTerminal = (WrappedComponent) => props => {
     return (
-        <WithStripeTerminal>
+        <InjectStripeTerminal>
             {stripeTerminal => <WrappedComponent {...props} stripeTerminal={stripeTerminal}/>}
-        </WithStripeTerminal>
+        </InjectStripeTerminal>
     )
 }

@@ -134,7 +134,6 @@ class TerminalFactory {
         onPaymentStatusChange,
         onUnexpectedReaderDisconnect,
         aquarium}) {
-
         if (this._terminal) {
             // there's only one terminal in any POS app
             return this._terminal

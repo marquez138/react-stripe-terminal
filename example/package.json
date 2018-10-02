@@ -18,7 +18,7 @@
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-scripts": "^1.1.5",
-    "react-stripe-pos": "git://github.com/sedouard/react-stripe-terminal.git#master",
+    "react-stripe-pos": "link:..",
     "react-syntax-highlighter": "^8.0.1",
     "set-value": "^3.0.0",
     "wolfy87-eventemitter": "^5.2.5"

@@ -18,25 +18,29 @@ class ConnectionManager {
                 connectingToReader: reader.id,
                 reader
             }
-        }));
+        }))
         let connection = await this._terminal.connectReader(reader)
         if (connection.error) {
             return this._component.setState(state => ({
                 error: connection.error,
-                connectingToReader: null,
-                connection: null
+                connection: {
+                    ...state.connection,
+                    connectingToReader: null,
+                    status: ConnectionManager.CONNECTION_STATE.DISCONNECTED
+                }
             }))
         }
         this._component.setState({
             connecting: false
         })
-        return this._component.setState(state => ({
+        this._component.setState(state => ({
             connection: {
                 ...state.connection,
                 connectingToReader: null,
                 reader
             }
         }))
+        return connection
     }
     async disconnectReader () {
         await this._terminal.disconnectReader()
@@ -52,12 +56,13 @@ class ConnectionManager {
         })
     }
     async onDisconnect(ev) {
-        this._component.setState({
+        this._component.setState(state => ({
             connection: {
+                ...state.connection,
                 status: ConnectionManager.CONNECTION_STATE.DISCONNECTED
             },
             error: ev.error
-        })
+        }))
     }
     handleConnectionStatusChange = ev => {
         if (ev.status === ConnectionManager.CONNECTION_STATE.NETWORK_ERROR) {
@@ -65,11 +70,12 @@ class ConnectionManager {
                 discoveredReaders: []
             })
         }
-        this._component.setState({
+        this._component.setState(state => ({
             connection: {
+                ...state.connection,
                 status: ev.status
             }
-        })
+        }))
     }
     handleUnexpectedReaderDisconnect = ev => {
         this.onDisconnect(ev)

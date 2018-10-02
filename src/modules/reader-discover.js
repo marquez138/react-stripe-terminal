@@ -11,6 +11,7 @@ class ReaderDiscover {
         }
 
         this._component.setState({ discoveredReaders })
+        return discoveredReaders
     }
     async registerReader(options) {
         try {

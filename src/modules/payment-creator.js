@@ -45,6 +45,7 @@ class PaymentCreator {
             this._component.setState(state => ({
                 payment: {
                     ...state.payment,
+                    paymentIntent,
                     error: attachSourceError
                 }
             }))
@@ -56,13 +57,28 @@ class PaymentCreator {
             this._component.setState(state => ({
                 payment: {
                     ...state.payment,
+                    paymentIntent: null,
                     error: confirmedIntentError
                 }
             }))
             return confirmedIntentError
         }
+        this._component.setState(state => ({
+            payment: {
+                ...state.payment,
+                paymentIntent: confirmedPaymentIntent,
+                error: attachSourceError
+            }
+        }))
         if (capture) {
-            await this._component.props.onCapturePaymentIntent(confirmedPaymentIntent)
+            confirmedPaymentIntent = await this._component.props.onCapturePaymentIntent(confirmedPaymentIntent)
+            this._component.setState(state => ({
+                payment: {
+                    ...state.payment,
+                    paymentIntent: confirmedPaymentIntent,
+                    error: attachSourceError
+                }
+            }))
         } else {
             return paymentIntent
         }
