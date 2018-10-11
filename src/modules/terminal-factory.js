@@ -79,9 +79,20 @@ class Terminal {
         return result
     }
 
-    async discoverReaders () {
-        const result = await this._terminal.discoverReaders()
+    async discoverReaders (discoveryOptions) {
+        const result = await this._terminal.discoverReaders(discoveryOptions)
         return result
+    }
+
+    async startReaderDiscovery (discoveryOptions, onDiscoveredReaders, onError) {
+        await this._terminal.startReaderDiscovery(
+            discoveryOptions,
+            onDiscoveredReaders,
+            onError)
+    }
+
+    async stopDiscoverReaders () {
+        await this._terminal.stopReaderDiscovery()
     }
 
     async clearReaderDisplay() {
@@ -94,8 +105,13 @@ class Terminal {
         return result
     }
 
-    async attachSource(intent) {
-        const result = await this._terminal.attachSource(intent)
+    async collectPaymentMethod(intent) {
+        const result = await this._terminal.collectPaymentMethod(intent)
+        return result
+    }
+
+    async cancelCollectPaymentMethod(intent) {
+        const result = await this._terminal.cancelCollectPaymentMethod(intent)
         return result
     }
 
@@ -118,7 +134,6 @@ class TerminalFactory {
         onPaymentStatusChange,
         onUnexpectedReaderDisconnect,
         aquarium}) {
-
         if (this._terminal) {
             // there's only one terminal in any POS app
             return this._terminal
