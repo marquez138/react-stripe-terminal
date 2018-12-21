@@ -59,11 +59,6 @@ class ReaderDisplay {
             this._component.state.connection.status !==
             ConnectionManager.CONNECTION_STATE.CONNECTED
         ) {
-            console.trace(
-                `NOT TOUCHING BASKET: ${
-                    this._component.state.connection.status
-                }`
-            );
             return;
         }
         const { lineItems } = this._component.state.payment;
@@ -90,36 +85,53 @@ class ReaderDisplay {
                 ),
             ];
         } else {
-            existingLineItem.quantity -= removeQuantity;
-            existingLineItem.quantity += addQuantity;
-
-            if (existingLineItem.quantity <= 0) {
-                // remove line item
-                updatedItems = [
-                    ...lineItems.slice(0, updateIndex),
-                    ...lineItems.slice(updateIndex + 1),
-                ];
-            } else {
-                // update line item
-                updatedItems = [
-                    ...lineItems.slice(0, updateIndex),
-                    Object.assign(
-                        {},
-                        {
-                            total:
-                                existingLineItem.amount *
-                                existingLineItem.quantity,
-                        },
-                        existingLineItem
-                    ),
-                    ...lineItems.slice(updateIndex + 1),
-                ];
-            }
+            updatedItems = this._adjustQuantity({
+                existingLineItem,
+                removeQuantity,
+                addQuantity,
+                lineItems,
+                updateIndex,
+            });
         }
 
         const tax = this.computeTaxAmount(updatedItems);
         const subtotal = this.computeSubtotal(updatedItems);
-
+        this._updateTaxTotalState({ tax, subtotal, updatedItems });
+    }
+    _adjustQuantity({
+        existingLineItem,
+        removeQuantity,
+        addQuantity,
+        lineItems,
+        updateIndex,
+    }) {
+        existingLineItem.quantity -= removeQuantity;
+        existingLineItem.quantity += addQuantity;
+        let updatedItems;
+        if (existingLineItem.quantity <= 0) {
+            // remove line item
+            updatedItems = [
+                ...lineItems.slice(0, updateIndex),
+                ...lineItems.slice(updateIndex + 1),
+            ];
+        } else {
+            // update line item
+            updatedItems = [
+                ...lineItems.slice(0, updateIndex),
+                Object.assign(
+                    {},
+                    {
+                        total:
+                            existingLineItem.amount * existingLineItem.quantity,
+                    },
+                    existingLineItem
+                ),
+                ...lineItems.slice(updateIndex + 1),
+            ];
+        }
+        return updatedItems;
+    }
+    _updateTaxTotalState({ tax, subtotal, updatedItems }) {
         this._component.setState(
             state => ({
                 payment: {
