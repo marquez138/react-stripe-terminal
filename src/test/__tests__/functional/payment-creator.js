@@ -28,12 +28,6 @@ class PaymentComponent extends TestComponent {
     }
 }
 describe('payment-creator', () => {
-    afterEach(() => {
-        return new Promise(resolve => {
-            console.log('test pause');
-            setTimeout(resolve(), 10000);
-        });
-    });
     /**
      * Creating payments takes a little longer so test timeouts here are 10s
      */
