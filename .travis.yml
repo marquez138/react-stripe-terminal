@@ -5,7 +5,7 @@ node_js:
 before_install:
     # setting the path for phantom.js 2.0.0
     - 'npm config set spin false'
-    - 'npm install -g yarn'
+    - 'npm install -g yarn@1.5.1'
 install:
     - yarn install
 script:
