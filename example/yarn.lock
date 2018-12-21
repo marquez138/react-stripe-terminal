@@ -1790,7 +1790,7 @@ cross-spawn@^6.0.4:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
-crypto-browserify@^3.11.0:
+crypto-browserify@^3.11.0, crypto-browserify@^3.12.0:
   version "3.12.0"
   resolved "https://registry.npmjs.org/crypto-browserify/-/crypto-browserify-3.12.0.tgz#396cf9f3137f03e4b8e532c58f698254e00f80ec"
   dependencies:
@@ -1809,6 +1809,10 @@ crypto-browserify@^3.11.0:
 crypto-random-string@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/crypto-random-string/-/crypto-random-string-1.0.0.tgz#a230f64f568310e1498009940790ec99545bca7e"
+
+crypto@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/crypto/-/crypto-1.0.1.tgz#2af1b7cad8175d24c8a1b0778255794a21803037"
 
 css-color-names@0.0.4:
   version "0.0.4"
@@ -5783,6 +5787,10 @@ punycode@^1.2.4, punycode@^1.4.1:
 punycode@^2.1.0:
   version "2.1.1"
   resolved "https://registry.npmjs.org/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
+
+pure-uuid@^1.5.5:
+  version "1.5.5"
+  resolved "https://registry.npmjs.org/pure-uuid/-/pure-uuid-1.5.5.tgz#aad315cebe9e31e612280fe1c9c9f8b48facf664"
 
 q@^1.1.2:
   version "1.5.1"

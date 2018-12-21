@@ -62,7 +62,7 @@ class Terminal {
         if (this._connectedReader) {
             throw new Error('An Active connection already exists')
         }
-        await TestSetup.FakeAsync()
+        await TestSetup.FakeAsync();
         this._onConnectionStatusChange({status: 'connecting'})
         this._connectedReader = discoveredReader
         await new Promise(resolve => resolve(this._onUnexpectedReaderDisconnect({error: 'Reader disconnected'})))
@@ -74,9 +74,9 @@ class Terminal {
         if (!this._connectedReader) {
             throw new Error('Must have an active connection to disconnect')
         }
-        await TestSetup.FakeAsync()
-        this._connectedReader = null
-        this._onDisconnect()
+        await TestSetup.FakeAsync();
+        this._connectedReader = null;
+        this._onDisconnect();
         this._onConnectionStatusChange({status: 'not_connected'})
     }
     async beginCheckout() {

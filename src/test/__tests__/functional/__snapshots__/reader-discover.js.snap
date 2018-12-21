@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`discoverReaders discovers available readers and updates discovery.discoveredReaders subhash state 1`] = `
+<div>
+  Readers
+  Discovered
+   
+  0
+   Readers
+</div>
+`;
+
+exports[`discoverReaders discovers available readers and updates discovery.discoveredReaders subhash state 2`] = `
+<div>
+  Readers
+  <div>
+    SIMULATED
+    0.0.0.0
+    verifone_P400
+    online
+    SIMULATED
+    SIMULATED
+  </div>
+  Discovered
+   
+  1
+   Readers
+</div>
+`;
+
+exports[`discoverReaders starts discoverReaders to find available readers and updates discovery.discoveredReaders subhash state 1`] = `
+<div>
+  Readers
+  Discovered
+   
+  0
+   Readers
+</div>
+`;
+
+exports[`discoverReaders starts discoverReaders to find available readers and updates discovery.discoveredReaders subhash state 2`] = `
+<div>
+  Readers
+  <div>
+    SIMULATED
+    0.0.0.0
+    verifone_P400
+    online
+    SIMULATED
+    SIMULATED
+  </div>
+  Discovered
+   
+  1
+   Readers
+</div>
+`;

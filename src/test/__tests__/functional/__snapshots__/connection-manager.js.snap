@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`connectReader connects to a Reader and updates state 1`] = `
+<div>
+  connected
+  SIMULATED
+</div>
+`;
+
+exports[`connectReader connects to a Reader and updates state 2`] = `
+<div>
+  not_connected
+</div>
+`;

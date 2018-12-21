@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`payment-creator cancelCreatePayment cancels an in-flight payment 1`] = `
+<div>
+  Payment Status: 
+</div>
+`;
+
+exports[`payment-creator cancelCreatePayment cancels an in-flight payment 2`] = `
+<div>
+  Payment Status: 
+  collecting_payment_method
+</div>
+`;
+
+exports[`payment-creator cancelCreatePayment cancels an in-flight payment 3`] = `
+<div>
+  Payment Status: 
+  ready
+</div>
+`;
+
+exports[`payment-creator cancelCreatePayment cancels an in-flight payment 4`] = `
+<div>
+  Payment Status: 
+  ready
+</div>
+`;
+
+exports[`payment-creator createPayment creates a payment 1`] = `
+<div>
+  Payment Status: 
+</div>
+`;
+
+exports[`payment-creator createPayment creates a payment 2`] = `
+<div>
+  Payment Status: 
+  collecting_payment_method
+</div>
+`;
+
+exports[`payment-creator createPayment creates a payment 3`] = `
+<div>
+  Payment Status: 
+  ready
+</div>
+`;
+
+exports[`payment-creator createPayment creates a payment 4`] = `
+<div>
+  Payment Status: 
+  confirming_payment_intent
+</div>
+`;
+
+exports[`payment-creator createPayment creates a payment 5`] = `
+<div>
+  Payment Status: 
+  ready
+</div>
+`;

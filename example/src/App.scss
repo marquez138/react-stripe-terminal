@@ -1,7 +1,6 @@
 @import './node_modules/materialize-css/sass/components/color';
 @import './node_modules/materialize-css/sass/components/variables';
 @import './node_modules/materialize-css/sass/components/grid';
-@import './modules/aquarium/styles/Fishbowl.scss';
 
 $main-text-color: color('blue-grey', 'base');
 $active-color: color('blue-grey', 'lighten-5');
@@ -16,179 +15,181 @@ $basket-height: 300px;
 $animations-duration: 0.25s;
 
 .Fishbowl {
-  max-height: ($basket-height + 400px);
+    max-height: ($basket-height + 400px);
 }
 
 .StripePOS {
-  i.material-icons {
-    font-size: 20px;
-  }
-  .fade-in {
-    opacity: 1;
-    animation-name: fade-in-opacity;
-    animation-iteration-count: 1;
-    animation-timing-function: ease-in;
-    animation-duration: $animations-duration;
-  }
-  @keyframes fade-in-opacity {
-    0% {
-      opacity: 0
-    }
-    100% {
-      opacity: 1
-    }
-  }
-  .height-expand-in {
-    height: auto;
-    animation: height-expand;
-  }
-  @keyframes height-expand {
-    0% {
-      height: initial;
-    }
-    100% {
-      height: auto;
-    }
-  }
-  font-family: "Helvetica Neue", Helvetica, sans-seankrif;
-  span {
-    font-size: 18px;
-    color: $main-text-color;
-  }
-  .right {
-    float: right
-  }
-  .center {
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-  }
-  .reader-name {
-    font-size: 1.2rem
-  }
-  .success {
-    background-color: $success-color;
-  }
-  .active {
-    background-color: $active-color;
-  }
-  .failed {
-    background-color: $failed-color;
-  }
-  .extra-action {
-    background-color: $extra-action-color;
-  }
-  .box {
-    transition: transform 0.3s ease-out;
-    transform: scaleY(1);
-    height: auto;
-    transform-origin: top;
-    margin: 10px;
-    color: $secondary-text-color;
-    line-height: 18px;
-    font-size: 16px;
-    height: 18px;
-    -webkit-font-smoothing: antialiased;
-    border-radius: $border-radius;
-    border: 1px solid transparent;
-    box-shadow: 0 1px 3px 0 $input-shadow-color;
-    height: auto;
-  }
-  .item-list {
-    height: $basket-height;
-    overflow-y: auto;
-    .empty-basket-placeholder {
-      @extend .center;
-      position: relative;
-      top: $basket-height / 3;
-      color: $secondary-text-color;
-    }
-    .list-item {
-      @extend .box;
-      @extend .fade-in;
-      padding-left: 8px;
-      font-weight: 500;
-    }
-  }
-  input {
-    @extend .box;
-    min-height: 25px;
-  }
-  input:focus {
-    box-shadow: 0 1px 3px 0 #cfd7df;
-    outline: none;
-  }
-  label {
-    margin: 5px;
-    margin-bottom: 2px;
-    display: block;
-    color: $main-text-color;
-  }
-  section {
-    box-shadow: 0 1px 3px 0 $section-shadow-color;
-    min-height: 35px;
-    border-radius: $border-radius;
-    padding-top: 0px !important;
-    padding-bottom: 0px !important;
-  }
-  span.FormHeader {
-    font-size: 20px;
-    color: $main-text-color;
-    margin-left: 2px;
-    margin-top: 2px;
-    display: block;
-  }
-  .btn {
-    margin: 5px;
-    margin-top: 0px;
-    border: none;
-    border-radius: $border-radius;
-    outline: none;
-    text-decoration: none;
-    color: #fff;
-    background: #32325d;
-    white-space: nowrap;
-    display: inline-block;
-    height: 40px;
-    line-height: 40px;
-    padding: 0 14px;
-    box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
-    border-radius: 4px;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.025em;
-    text-decoration: none;
-    -webkit-transition: all 150ms ease;
-    transition: all 150ms ease;
-    margin-left: 12px;
-    margin-top: 5px;
-  }
-  .btn:hover {
-    transform: translateY(-1px);
-    background-color: #43458b;
-    box-shadow: 0 7px 14px rgba(50, 50, 93, .10), 0 3px 6px rgba(0, 0, 0, .08);
-  }
-  .btn-rounded {
-    @extend .btn;
-    border-radius: 20px;
-    width: 30px;
-    height: 30px;
     i.material-icons {
-      margin-left: -11px;
-      margin-top: 4px;
+        font-size: 20px;
     }
-  }
-  .error-box {
-    @extend .box;
-    @extend .row;
-    padding-left: 5px;
-    padding-right: 5px;
-    color: white;
-    background-color: color('red', 'lighten-2')
-  }
-  .row {
-    div {
-      margin-bottom: 2px;
+    .fade-in {
+        opacity: 1;
+        animation-name: fade-in-opacity;
+        animation-iteration-count: 1;
+        animation-timing-function: ease-in;
+        animation-duration: $animations-duration;
     }
-  }
+    @keyframes fade-in-opacity {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+    .height-expand-in {
+        height: auto;
+        animation: height-expand;
+    }
+    @keyframes height-expand {
+        0% {
+            height: initial;
+        }
+        100% {
+            height: auto;
+        }
+    }
+    font-family: 'Helvetica Neue', Helvetica, sans-seankrif;
+    span {
+        font-size: 18px;
+        color: $main-text-color;
+    }
+    .right {
+        float: right;
+    }
+    .center {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+    .reader-name {
+        font-size: 1.2rem;
+    }
+    .success {
+        background-color: $success-color;
+    }
+    .active {
+        background-color: $active-color;
+    }
+    .failed {
+        background-color: $failed-color;
+    }
+    .extra-action {
+        background-color: $extra-action-color;
+    }
+    .box {
+        transition: transform 0.3s ease-out;
+        transform: scaleY(1);
+        height: auto;
+        transform-origin: top;
+        margin: 10px;
+        color: $secondary-text-color;
+        line-height: 18px;
+        font-size: 16px;
+        height: 18px;
+        -webkit-font-smoothing: antialiased;
+        border-radius: $border-radius;
+        border: 1px solid transparent;
+        box-shadow: 0 1px 3px 0 $input-shadow-color;
+        height: auto;
+    }
+    .item-list {
+        height: $basket-height;
+        overflow-y: auto;
+        .empty-basket-placeholder {
+            @extend .center;
+            position: relative;
+            top: $basket-height / 3;
+            color: $secondary-text-color;
+        }
+        .list-item {
+            @extend .box;
+            @extend .fade-in;
+            padding-left: 8px;
+            font-weight: 500;
+        }
+    }
+    input {
+        @extend .box;
+        min-height: 25px;
+    }
+    input:focus {
+        box-shadow: 0 1px 3px 0 #cfd7df;
+        outline: none;
+    }
+    label {
+        margin: 5px;
+        margin-bottom: 2px;
+        display: block;
+        color: $main-text-color;
+    }
+    section {
+        box-shadow: 0 1px 3px 0 $section-shadow-color;
+        min-height: 35px;
+        border-radius: $border-radius;
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+    }
+    span.FormHeader {
+        font-size: 20px;
+        color: $main-text-color;
+        margin-left: 2px;
+        margin-top: 2px;
+        display: block;
+    }
+    .btn {
+        margin: 5px;
+        margin-top: 0px;
+        border: none;
+        border-radius: $border-radius;
+        outline: none;
+        text-decoration: none;
+        color: #fff;
+        background: #32325d;
+        white-space: nowrap;
+        display: inline-block;
+        height: 40px;
+        line-height: 40px;
+        padding: 0 14px;
+        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11),
+            0 1px 3px rgba(0, 0, 0, 0.08);
+        border-radius: 4px;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.025em;
+        text-decoration: none;
+        -webkit-transition: all 150ms ease;
+        transition: all 150ms ease;
+        margin-left: 12px;
+        margin-top: 5px;
+    }
+    .btn:hover {
+        transform: translateY(-1px);
+        background-color: #43458b;
+        box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1),
+            0 3px 6px rgba(0, 0, 0, 0.08);
+    }
+    .btn-rounded {
+        @extend .btn;
+        border-radius: 20px;
+        width: 30px;
+        height: 30px;
+        i.material-icons {
+            margin-left: -11px;
+            margin-top: 4px;
+        }
+    }
+    .error-box {
+        @extend .box;
+        @extend .row;
+        padding-left: 5px;
+        padding-right: 5px;
+        color: white;
+        background-color: color('red', 'lighten-2');
+    }
+    .row {
+        div {
+            margin-bottom: 2px;
+        }
+    }
 }

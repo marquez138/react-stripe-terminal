@@ -9,34 +9,63 @@ class Terminal {
         onConnectionStatusChange,
         onPaymentStatusChange,
         onUnexpectedReaderDisconnect,
-        aquarium
+        aquarium,
     }) {
-        this._aquarium = aquarium
+        this._aquarium = aquarium;
 
         // Wrap our instance methods for tracing
         if (this._aquarium) {
-            let instanceMethodNames = Object.getOwnPropertyNames(Object.getPrototypeOf(this))
+            let instanceMethodNames = Object.getOwnPropertyNames(
+                Object.getPrototypeOf(this)
+            );
             for (let instanceMethodName of instanceMethodNames) {
                 // Simple logic to detect handlers and constructor
-                if (instanceMethodName === 'constructor' || instanceMethodName.startsWith('on')) {
-                    continue
+                if (
+                    instanceMethodName === 'constructor' ||
+                    instanceMethodName.startsWith('on')
+                ) {
+                    continue;
                 }
-                this[instanceMethodName] = this._aquarium.watchAction(this[instanceMethodName])
+                this[instanceMethodName] = this._aquarium.watchAction(
+                    this[instanceMethodName]
+                );
             }
             // wrap the handlers for tracing as well
             this._terminal = StripeTerminal.create({
-                onFetchConnectionToken: this._aquarium.watchAction(this.onFetchConnectionToken(onFetchConnectionToken), 'event'),
-                onConnectionStatusChange: this._aquarium.watchAction(this.onConnectionStatusChange(onConnectionStatusChange), 'event'),
-                onPaymentStatusChange: this._aquarium.watchAction(this.onPaymentStatusChange(onPaymentStatusChange), 'event'),
-                onUnexpectedReaderDisconnect: this._aquarium.watchAction(this.onUnexpectedReaderDisconnect(onUnexpectedReaderDisconnect), 'event')
-            })
+                onFetchConnectionToken: this._aquarium.watchAction(
+                    this.onFetchConnectionToken(onFetchConnectionToken),
+                    'event'
+                ),
+                onConnectionStatusChange: this._aquarium.watchAction(
+                    this.onConnectionStatusChange(onConnectionStatusChange),
+                    'event'
+                ),
+                onPaymentStatusChange: this._aquarium.watchAction(
+                    this.onPaymentStatusChange(onPaymentStatusChange),
+                    'event'
+                ),
+                onUnexpectedReaderDisconnect: this._aquarium.watchAction(
+                    this.onUnexpectedReaderDisconnect(
+                        onUnexpectedReaderDisconnect
+                    ),
+                    'event'
+                ),
+            });
         } else {
             this._terminal = StripeTerminal.create({
-                onFetchConnectionToken: this.onFetchConnectionToken(onFetchConnectionToken),
-                onConnectionStatusChange: this.onConnectionStatusChange(onConnectionStatusChange),
-                onPaymentStatusChange: this.onPaymentStatusChange(onPaymentStatusChange),
-                onUnexpectedReaderDisconnect: this.onUnexpectedReaderDisconnect(onUnexpectedReaderDisconnect)
-            })
+                onFetchConnectionToken: this.onFetchConnectionToken(
+                    onFetchConnectionToken
+                ),
+                onConnectionStatusChange: this.onConnectionStatusChange(
+                    onConnectionStatusChange
+                ),
+                onPaymentStatusChange: this.onPaymentStatusChange(
+                    onPaymentStatusChange
+                ),
+                onUnexpectedReaderDisconnect: this.onUnexpectedReaderDisconnect(
+                    onUnexpectedReaderDisconnect
+                ),
+            });
         }
     }
     /**
@@ -46,21 +75,21 @@ class Terminal {
      * handlers is explicitly named the ame exact name as the named parameter of the handler
      * expected by the `createTerminal` factory method
      */
-    onFetchConnectionToken (handler) {
-        let onFetchConnectionToken = posDeviceId => handler(posDeviceId)
-        return onFetchConnectionToken
+    onFetchConnectionToken(handler) {
+        let onFetchConnectionToken = posDeviceId => handler(posDeviceId);
+        return onFetchConnectionToken;
     }
-    onConnectionStatusChange (handler) {
-        let onConnectionStatusChange = (event) => handler(event)
-        return onConnectionStatusChange
+    onConnectionStatusChange(handler) {
+        let onConnectionStatusChange = event => handler(event);
+        return onConnectionStatusChange;
     }
-    onPaymentStatusChange (handler) {
-        let onPaymentStatusChange = (event) => handler(event)
-        return onPaymentStatusChange
+    onPaymentStatusChange(handler) {
+        let onPaymentStatusChange = event => handler(event);
+        return onPaymentStatusChange;
     }
-    onUnexpectedReaderDisconnect (handler) {
-        let onUnexpectedReaderDisconnect = (event) => handler(event)
-        return onUnexpectedReaderDisconnect
+    onUnexpectedReaderDisconnect(handler) {
+        let onUnexpectedReaderDisconnect = event => handler(event);
+        return onUnexpectedReaderDisconnect;
     }
     /* END HANDLER WRAPPERS */
 
@@ -70,54 +99,61 @@ class Terminal {
      * functions helps with readability of the SDK usage
      */
     async disconnectReader() {
-        const result = await this._terminal.disconnectReader()
-        return result
+        const result = await this._terminal.disconnectReader();
+        return result;
+    }
+
+    clearConnectionToken() {
+        this._terminal.clearConnectionToken();
     }
 
     async connectReader(reader) {
-        const result = await this._terminal.connectReader(reader)
-        return result
+        const result = await this._terminal.connectReader(reader);
+        return result;
     }
 
-    async discoverReaders (discoveryOptions) {
-        const result = await this._terminal.discoverReaders(discoveryOptions)
-        return result
+    async discoverReaders(discoveryOptions) {
+        const result = await this._terminal.discoverReaders(discoveryOptions);
+        return result;
     }
 
-    async startReaderDiscovery (discoveryOptions, onDiscoveredReaders, onError) {
+    async startReaderDiscovery(discoveryOptions, onDiscoveredReaders, onError) {
         await this._terminal.startReaderDiscovery(
             discoveryOptions,
             onDiscoveredReaders,
-            onError)
+            onError
+        );
     }
 
-    async stopDiscoverReaders () {
-        await this._terminal.stopReaderDiscovery()
+    async stopReaderDiscovery() {
+        await this._terminal.stopReaderDiscovery();
     }
 
     async clearReaderDisplay() {
-        const result = await this._terminal.clearReaderDisplay()
-        return result
+        const result = await this._terminal.clearReaderDisplay();
+        return result;
     }
 
     async setReaderDisplay(options) {
-        const result = await this._terminal.setReaderDisplay(options)
-        return result
+        const result = await this._terminal.setReaderDisplay(options);
+        return result;
     }
 
     async collectPaymentMethod(intent) {
-        const result = await this._terminal.collectPaymentMethod(intent)
-        return result
+        const result = await this._terminal.collectPaymentMethod(intent);
+        return result;
     }
 
     async cancelCollectPaymentMethod(intent) {
-        const result = await this._terminal.cancelCollectPaymentMethod(intent)
-        return result
+        const result = await this._terminal.cancelCollectPaymentMethod(intent);
+        return result;
     }
 
     async confirmPaymentIntent(attachedIntent) {
-        const result = await this._terminal.confirmPaymentIntent(attachedIntent)
-        return result
+        const result = await this._terminal.confirmPaymentIntent(
+            attachedIntent
+        );
+        return result;
     }
 
     /** END POS SDK WRAPPERS */
@@ -133,20 +169,17 @@ class TerminalFactory {
         onConnectionStatusChange,
         onPaymentStatusChange,
         onUnexpectedReaderDisconnect,
-        aquarium}) {
-        if (this._terminal) {
-            // there's only one terminal in any POS app
-            return this._terminal
-        }
+        aquarium,
+    }) {
         this._terminal = new Terminal({
             onFetchConnectionToken,
             onConnectionStatusChange,
             onPaymentStatusChange,
             onUnexpectedReaderDisconnect,
-            aquarium
-        })
-        return this._terminal
+            aquarium,
+        });
+        return this._terminal;
     }
 }
 
-export default TerminalFactory
+export default TerminalFactory;

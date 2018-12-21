@@ -1,0 +1,691 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lineItems adds line items to display and computes total and tax 1`] = `
+<div>
+  <p>
+    Basket Items
+  </p>
+  <p>
+    Subtotal: 
+    12000
+  </p>
+  <p>
+    Tax: 
+    420
+  </p>
+  <p>
+    Balance Due:
+    12420
+  </p>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      2
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      2
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      2
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+</div>
+`;
+
+exports[`lineItems clears payment state and reader screen 1`] = `
+<div>
+  <p>
+    Basket Items
+  </p>
+  <p>
+    Subtotal: 
+    12000
+  </p>
+  <p>
+    Tax: 
+    420
+  </p>
+  <p>
+    Balance Due:
+    12420
+  </p>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      2
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      2
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      2
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+</div>
+`;
+
+exports[`lineItems clears payment state and reader screen 2`] = `
+<div>
+  <p>
+    Basket Items
+  </p>
+  <p>
+    Subtotal: 
+  </p>
+  <p>
+    Tax: 
+    0
+  </p>
+  <p>
+    Balance Due:
+    0
+  </p>
+</div>
+`;
+
+exports[`lineItems computes custom total and tax for line items 1`] = `
+<div>
+  <p>
+    Basket Items
+  </p>
+  <p>
+    Subtotal: 
+    5
+  </p>
+  <p>
+    Tax: 
+    5
+  </p>
+  <p>
+    Balance Due:
+    10
+  </p>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      2
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      2
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      2
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+</div>
+`;
+
+exports[`lineItems computes custom total and tax for line items 2`] = `
+<div>
+  <p>
+    Basket Items
+  </p>
+  <p>
+    Subtotal: 
+  </p>
+  <p>
+    Tax: 
+    0
+  </p>
+  <p>
+    Balance Due:
+    0
+  </p>
+</div>
+`;
+
+exports[`lineItems removeLineItems decrements quantity from display and state computes total and tax 1`] = `
+<div>
+  <p>
+    Basket Items
+  </p>
+  <p>
+    Subtotal: 
+    12000
+  </p>
+  <p>
+    Tax: 
+    420
+  </p>
+  <p>
+    Balance Due:
+    12420
+  </p>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      2
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      2
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      2
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+</div>
+`;
+
+exports[`lineItems removeLineItems decrements quantity from display and state computes total and tax 2`] = `
+<div>
+  <p>
+    Basket Items
+  </p>
+  <p>
+    Subtotal: 
+    10000
+  </p>
+  <p>
+    Tax: 
+    420
+  </p>
+  <p>
+    Balance Due:
+    10420
+  </p>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      1
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      2
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      2
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+</div>
+`;
+
+exports[`lineItems removeLineItems decrements quantity from display and state computes total and tax 3`] = `
+<div>
+  <p>
+    Basket Items
+  </p>
+  <p>
+    Subtotal: 
+    8000
+  </p>
+  <p>
+    Tax: 
+    420
+  </p>
+  <p>
+    Balance Due:
+    8420
+  </p>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      1
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      1
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      2
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+</div>
+`;
+
+exports[`lineItems removeLineItems decrements quantity from display and state computes total and tax 4`] = `
+<div>
+  <p>
+    Basket Items
+  </p>
+  <p>
+    Subtotal: 
+    6000
+  </p>
+  <p>
+    Tax: 
+    420
+  </p>
+  <p>
+    Balance Due:
+    6420
+  </p>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      1
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      1
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      1
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+</div>
+`;
+
+exports[`lineItems removeLineItems removes items from display and state computes total and tax 1`] = `
+<div>
+  <p>
+    Basket Items
+  </p>
+  <p>
+    Subtotal: 
+    6000
+  </p>
+  <p>
+    Tax: 
+    420
+  </p>
+  <p>
+    Balance Due:
+    6420
+  </p>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      1
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      1
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      1
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+</div>
+`;
+
+exports[`lineItems removeLineItems removes items from display and state computes total and tax 2`] = `
+<div>
+  <p>
+    Basket Items
+  </p>
+  <p>
+    Subtotal: 
+    4000
+  </p>
+  <p>
+    Tax: 
+    280
+  </p>
+  <p>
+    Balance Due:
+    4280
+  </p>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      1
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      1
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+</div>
+`;
+
+exports[`lineItems removeLineItems removes items from display and state computes total and tax 3`] = `
+<div>
+  <p>
+    Basket Items
+  </p>
+  <p>
+    Subtotal: 
+    2000
+  </p>
+  <p>
+    Tax: 
+    140
+  </p>
+  <p>
+    Balance Due:
+    2140
+  </p>
+  <div
+    id="id-rendered"
+  >
+    <p>
+      amount: 
+      2000
+    </p>
+    <p>
+      quantity: 
+      1
+    </p>
+    <p>
+      description: 
+      Silver Hat
+    </p>
+  </div>
+</div>
+`;
+
+exports[`lineItems removeLineItems removes items from display and state computes total and tax 4`] = `
+<div>
+  <p>
+    Basket Items
+  </p>
+  <p>
+    Subtotal: 
+    0
+  </p>
+  <p>
+    Tax: 
+    0
+  </p>
+  <p>
+    Balance Due:
+    0
+  </p>
+</div>
+`;
