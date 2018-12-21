@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 process.removeAllListeners('unhandledRejection');
-process.on('unhandledRejection', (error, promise) => {
+process.on('unhandledRejection', error => {
     if (error.message === 'Action canceled.') {
         // silently ignore as this is thrown by the sdk and in the jsdom
         // environment it seems impossible to catch
