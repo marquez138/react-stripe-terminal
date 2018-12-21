@@ -1,7 +1,7 @@
 dist: trusty
 language: node_js
 node_js:
-    - '8'
+    - '8.11.3'
 before_install:
     # setting the path for phantom.js 2.0.0
     - 'npm config set spin false'
