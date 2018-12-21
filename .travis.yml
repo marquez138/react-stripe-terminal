@@ -15,4 +15,6 @@ before_script:
 script:
     - yarn test --coverage
 after_script:
-    - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT -t lcov -i ./coverage/lcov.info
+    - ./cc-test-reporter format-coverage -t lcov ./coverage/lcov.info
+    - ./cc-test-reporter upload-coverage
+    - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
