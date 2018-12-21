@@ -124,7 +124,11 @@ describe('payment-creator', () => {
                                 !cancelled
                             ) {
                                 cancelled = true;
-                                await stripeTerminal.cancelCreatePayment();
+                                try {
+                                    await stripeTerminal.cancelCreatePayment();
+                                } catch (e) {
+                                    console.error(e);
+                                }
                             }
                         }}
                         stripeTerminalTestHook={t => {
@@ -141,19 +145,17 @@ describe('payment-creator', () => {
             });
             await stripeTerminal.connectReader(readers[0]);
 
-            try {
-                let pi = await stripeTerminal.createPayment({
-                    paymentIntentOptions: {
-                        amount: 100,
-                        currency: 'usd',
-                    },
-                });
-                expect(piHandlerCalled).toBe(true);
-                renderer.update(testElement);
-                expect(typeof pi).toBe('object');
-                expect(renderer.toJSON()).toMatchSnapshot();
-                await stripeTerminal.disconnectReader();
-            } catch (e) {}
+            await stripeTerminal.createPayment({
+                paymentIntentOptions: {
+                    amount: 100,
+                    currency: 'usd',
+                },
+            });
+
+            expect(piHandlerCalled).toBe(true);
+            renderer.update(testElement);
+            expect(renderer.toJSON()).toMatchSnapshot();
+            await stripeTerminal.disconnectReader();
         }, 10000);
     });
 });

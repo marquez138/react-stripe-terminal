@@ -5,6 +5,16 @@ import fetch from 'isomorphic-fetch';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
+process.on('unhandledRejection', (error, promise) => {
+    if (error.message === 'Action canceled.') {
+        // silently ignore as this is thrown by the sdk and in the jsdom
+        // environment it seems impossible to catch
+        return;
+    }
+    console.log('Unhandled Rejection at:', error.stack || error);
+    throw error;
+});
+
 /**
  * Loads stored terminal SDK library that contains small fixes to run in test envirpnment
  */
