@@ -1,3 +1,8 @@
+/**
+ * This file is exempt from the MIT license of this software library and is under
+ * the license scope defined by Stripe Inc by loading the original file at:
+ * https://js.stripe.com/terminal/v1/sdk-b1.js
+ */
 var StripeTerminal = function(e) {
     var t = {};
     function n(r) {

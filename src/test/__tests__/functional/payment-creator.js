@@ -17,21 +17,7 @@ const createPaymentIntent = async ({ amount, currency = 'usd' }) => {
     const result = JSON.parse(response);
     return result.client_secret;
 };
-const capturePayment = async confirmedIntent => {
-    console.trace('capture');
-    const response = await rp.post(
-        `https://api.stripe.com/v1/payment_intents/${
-            confirmedIntent.id
-        }/capture?amount_to_capture=${confirmedIntent.amount}`,
-        {
-            headers: {
-                Authorization: `Bearer ${TestSetup.TEST_API_KEY}`,
-            },
-        }
-    );
-    const result = JSON.parse(response);
-    return result;
-};
+
 class PaymentComponent extends TestComponent {
     componentDidUpdate() {
         this.props.onVerifyState(this.props.stripeTerminal);
