@@ -5,6 +5,7 @@ import fetch from 'isomorphic-fetch';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
+process.removeAllListeners('unhandledRejection');
 process.on('unhandledRejection', (error, promise) => {
     if (error.message === 'Action canceled.') {
         // silently ignore as this is thrown by the sdk and in the jsdom
