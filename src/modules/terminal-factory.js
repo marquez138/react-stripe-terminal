@@ -15,41 +15,11 @@ class Terminal {
 
         // Wrap our instance methods for tracing
         if (this._aquarium) {
-            let instanceMethodNames = Object.getOwnPropertyNames(
-                Object.getPrototypeOf(this)
-            );
-            for (let instanceMethodName of instanceMethodNames) {
-                // Simple logic to detect handlers and constructor
-                if (
-                    instanceMethodName === 'constructor' ||
-                    instanceMethodName.startsWith('on')
-                ) {
-                    continue;
-                }
-                this[instanceMethodName] = this._aquarium.watchAction(
-                    this[instanceMethodName]
-                );
-            }
-            // wrap the handlers for tracing as well
-            this._terminal = StripeTerminal.create({
-                onFetchConnectionToken: this._aquarium.watchAction(
-                    this.onFetchConnectionToken(onFetchConnectionToken),
-                    'event'
-                ),
-                onConnectionStatusChange: this._aquarium.watchAction(
-                    this.onConnectionStatusChange(onConnectionStatusChange),
-                    'event'
-                ),
-                onPaymentStatusChange: this._aquarium.watchAction(
-                    this.onPaymentStatusChange(onPaymentStatusChange),
-                    'event'
-                ),
-                onUnexpectedReaderDisconnect: this._aquarium.watchAction(
-                    this.onUnexpectedReaderDisconnect(
-                        onUnexpectedReaderDisconnect
-                    ),
-                    'event'
-                ),
+            this._setupTracing({
+                onFetchConnectionToken,
+                onConnectionStatusChange,
+                onPaymentStatusChange,
+                onUnexpectedReaderDisconnect,
             });
         } else {
             this._terminal = StripeTerminal.create({
@@ -67,6 +37,47 @@ class Terminal {
                 ),
             });
         }
+    }
+    _setupTracing({
+        onFetchConnectionToken,
+        onConnectionStatusChange,
+        onPaymentStatusChange,
+        onUnexpectedReaderDisconnect,
+    }) {
+        let instanceMethodNames = Object.getOwnPropertyNames(
+            Object.getPrototypeOf(this)
+        );
+        for (let instanceMethodName of instanceMethodNames) {
+            // Simple logic to detect handlers and constructor
+            if (
+                instanceMethodName === 'constructor' ||
+                instanceMethodName.startsWith('on')
+            ) {
+                continue;
+            }
+            this[instanceMethodName] = this._aquarium.watchAction(
+                this[instanceMethodName]
+            );
+        }
+        // wrap the handlers for tracing as well
+        this._terminal = StripeTerminal.create({
+            onFetchConnectionToken: this._aquarium.watchAction(
+                this.onFetchConnectionToken(onFetchConnectionToken),
+                'event'
+            ),
+            onConnectionStatusChange: this._aquarium.watchAction(
+                this.onConnectionStatusChange(onConnectionStatusChange),
+                'event'
+            ),
+            onPaymentStatusChange: this._aquarium.watchAction(
+                this.onPaymentStatusChange(onPaymentStatusChange),
+                'event'
+            ),
+            onUnexpectedReaderDisconnect: this._aquarium.watchAction(
+                this.onUnexpectedReaderDisconnect(onUnexpectedReaderDisconnect),
+                'event'
+            ),
+        });
     }
     /**
      * The following static methods are wrappers for the the event handlers coming out of the

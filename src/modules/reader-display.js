@@ -1,11 +1,12 @@
 import ConnectionManager from './connection-manager';
+import AbstractReaderController from './abstract-reader-controller';
 
-class ReaderDisplay {
-    constructor({ terminal, component }) {
-        this._terminal = terminal;
-        this._component = component;
+class ReaderDisplay extends AbstractReaderController {
+    _ensureLineItemId(lineItem) {
+        if (!lineItem.id) {
+            throw new Error('Must provide unique lineItem.id');
+        }
     }
-
     computeSubtotal(items) {
         if (this._component.props.computeSubtotal) {
             // allow application to compute basket
@@ -43,15 +44,11 @@ class ReaderDisplay {
         return payment.lineItems.find(lineItem => lineItem.id === id);
     }
     async addLineItem({ lineItem, addQuantity = 1 }) {
-        if (!lineItem.id) {
-            throw new Error('Must provide unique lineItem.id');
-        }
+        this._ensureLineItemId(lineItem);
         await this._modifyLineItem({ lineItem, addQuantity });
     }
     async removeLineItem({ lineItem, removeQuantity = 1 }) {
-        if (!lineItem.id) {
-            throw new Error('Must provide unique lineItem.id');
-        }
+        this._ensureLineItemId(lineItem);
         await this._modifyLineItem({ lineItem, removeQuantity });
     }
     async _modifyLineItem({ lineItem, removeQuantity = 0, addQuantity = 0 }) {
