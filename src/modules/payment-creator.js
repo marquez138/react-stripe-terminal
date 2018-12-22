@@ -19,6 +19,35 @@ class PaymentCreator {
             },
         }));
     };
+    async _handleExternalHandlerCall({ arg, handlerFn }) {
+        try {
+            const intentSecret = await handlerFn(arg);
+            return intentSecret;
+        } catch (error) {
+            // the shape of this error is defined by the consuming application's handler
+            this._component.setState(state => ({
+                payment: {
+                    ...state.payment,
+                    error,
+                },
+            }));
+            throw error;
+        }
+    }
+    async _handleTerminalCall({ terminalFn, intentSecret }) {
+        let { paymentIntent, error } = await terminalFn(intentSecret);
+        if (error) {
+            this._component.setState(state => ({
+                payment: {
+                    ...state.payment,
+                    paymentIntent,
+                    error,
+                },
+            }));
+            throw error();
+        }
+        return paymentIntent;
+    }
     async createPayment({ paymentIntentOptions, capture = false }) {
         if (
             this._component.state.connection.status !==
@@ -27,74 +56,44 @@ class PaymentCreator {
             // if we aren't connected do not attempt a payment
             return;
         }
-        let intentSecret;
-        try {
-            intentSecret = await this._component.props.onPaymentIntentRequest(
-                paymentIntentOptions
-            );
-        } catch (error) {
-            console.log(error.stack);
-            // the shape of this error is defined by the consuming application's handler
-            this._component.setState(state => ({
-                payment: {
-                    ...state.payment,
-                    error,
-                },
-            }));
-            return error;
-        }
-        let {
-            paymentIntent,
-            error: attachSourceError,
-        } = await this._terminal.collectPaymentMethod(intentSecret);
 
-        if (attachSourceError) {
+        try {
+            const intentSecret = await this._handleExternalHandlerCall({
+                arg: paymentIntentOptions,
+                handlerFn: this._component.props.onPaymentIntentRequest.bind(
+                    this._component.props
+                ),
+            });
+            let paymentIntent = await this._handleTerminalCall({
+                terminalFn: this._terminal.collectPaymentMethod.bind(
+                    this._terminal
+                ),
+                intentSecret,
+            });
+            paymentIntent = await this._terminal.confirmPaymentIntent(
+                paymentIntent
+            );
             this._component.setState(state => ({
                 payment: {
                     ...state.payment,
                     paymentIntent,
-                    error: attachSourceError,
                 },
             }));
-            return attachSourceError;
-        }
-        let {
-            paymentIntent: confirmedPaymentIntent,
-            error: confirmedIntentError,
-        } = await this._terminal.confirmPaymentIntent(paymentIntent);
 
-        if (confirmedIntentError) {
-            this._component.setState(state => ({
-                payment: {
-                    ...state.payment,
-                    paymentIntent: null,
-                    error: confirmedIntentError,
-                },
-            }));
-            return confirmedIntentError;
-        }
-        this._component.setState(state => ({
-            payment: {
-                ...state.payment,
-                paymentIntent: confirmedPaymentIntent,
-                error: attachSourceError,
-            },
-        }));
-        if (capture && this._component.props.onCapturePaymentIntent) {
-            console.log('calling auto-capture!');
-            confirmedPaymentIntent = await this._component.props.onCapturePaymentIntent(
-                confirmedPaymentIntent
-            );
-            this._component.setState(state => ({
-                payment: {
-                    ...state.payment,
-                    paymentIntent: confirmedPaymentIntent,
-                    error: attachSourceError,
-                },
-            }));
-            return paymentIntent;
-        } else {
-            return paymentIntent;
+            if (capture && this._component.props.onCapturePaymentIntent) {
+                paymentIntent = await this._handleExternalHandlerCall({
+                    handlerFn: this._component.props.onCapturePaymentIntent.bind(
+                        this.component.props
+                    ),
+                    arg: paymentIntent,
+                });
+                return paymentIntent;
+            } else {
+                return paymentIntent;
+            }
+        } catch (error) {
+            // we've already set the thrown error on state.error so now just return
+            return error;
         }
     }
     async cancelCreatePayment() {

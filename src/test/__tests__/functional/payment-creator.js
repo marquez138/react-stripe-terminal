@@ -73,7 +73,7 @@ describe('payment-creator', () => {
             const readers = await stripeTerminal.discoverReaders({
                 method: 'simulated',
             });
-            await stripeTerminal.connectReader(readers[0]);
+            let conn = await stripeTerminal.connectReader(readers[0]);
 
             let pi = await stripeTerminal.createPayment({
                 paymentIntentOptions: {
