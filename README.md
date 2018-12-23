@@ -1,4 +1,4 @@
-# react-stripe-pos
+# react-stripe-terminal
 
 > React bindings for Stripe WebPOS SDK
 
