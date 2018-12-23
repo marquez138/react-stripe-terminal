@@ -17,7 +17,8 @@ export class StripeTerminalProvider extends Component {
         children: PropTypes.object,
         onRegisterReader: PropTypes.func,
         onPaymentIntentRequest: PropTypes.func.isRequired,
-        computeBasketTotals: PropTypes.func,
+        computeTaxAmount: PropTypes.func,
+        computeSubtotal: PropTypes.func,
         onCapturePaymentIntent: PropTypes.func,
         taxRate: PropTypes.number,
         discoveryToken: PropTypes.string,
@@ -112,11 +113,11 @@ export class StripeTerminalProvider extends Component {
             clearPayment: () => this._readerDisplay.clearPayment(),
             discoverReaders: discoveryOptions =>
                 this._readerDiscovery.discoverReaders({ discoveryOptions }),
-            startDiscoverReaders: discoveryOptions =>
+            startDiscovery: discoveryOptions =>
                 this._readerDiscovery.startDiscoverReaders({
                     discoveryOptions,
                 }),
-            stopDiscoverReaders: ({ discoveryOptions = {} } = {}) =>
+            stopDiscovery: ({ discoveryOptions = {} } = {}) =>
                 this._readerDiscovery.stopDiscoverReaders({ discoveryOptions }),
             registerReader: options =>
                 this._readerDiscovery.registerReader(options),

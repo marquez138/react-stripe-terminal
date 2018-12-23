@@ -99,10 +99,10 @@ describe('discoverReaders', () => {
         );
         const renderer = TestRenderer.create(testElement);
         expect(renderer.toJSON()).toMatchSnapshot();
-        await stripeTerminal.startDiscoverReaders({ method: 'simulated' });
+        await stripeTerminal.startDiscovery({ method: 'simulated' });
         renderer.update(testElement);
         expect(renderer.toJSON()).toMatchSnapshot();
-        await stripeTerminal.stopDiscoverReaders({ method: 'simulated' });
+        await stripeTerminal.stopDiscovery({ method: 'simulated' });
         renderer.unmount();
     });
 });
