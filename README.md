@@ -265,7 +265,7 @@ console.log(stripeTerminal.payment)
 
 The above statements would result in the `payment` sub-hash to be rendered as:
 
-```json
+```js
 {
     lineItems: [{
         id: 'ab3e-fe93-afe3-943e'
