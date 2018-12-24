@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 
 process.removeAllListeners('unhandledRejection');
 process.on('unhandledRejection', error => {
-    if (error.message === 'Action canceled.') {
+    if (error.message === 'Action canceled.' || error.message === 'Test Error') {
         // silently ignore as this is thrown by the sdk and in the jsdom
         // environment it seems impossible to catch
         return;

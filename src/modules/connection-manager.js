@@ -22,11 +22,17 @@ class ConnectionManager extends AbstractReaderController {
         try {
             connection = await this._terminal.connectReader(reader);
         } catch (e) {
-            console.trace(e);
+            this._component.setState(state => ({
+                error: e,
+                connection: {
+                    ...state.connection,
+                    connecting: false,
+                    status: ConnectionManager.CONNECTION_STATE.DISCONNECTED,
+                },
+            }));
             throw e;
         }
         if (connection && connection.error) {
-            console.error(connection.error);
             return this._component.setState(state => ({
                 error: connection.error,
                 connection: {

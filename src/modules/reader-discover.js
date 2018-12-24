@@ -1,4 +1,4 @@
-import AbstractReaderController from './abstract-reader-controller'
+import AbstractReaderController from './abstract-reader-controller';
 class ReaderDiscover extends AbstractReaderController {
     async discoverReaders({ discoveryOptions }) {
         const {

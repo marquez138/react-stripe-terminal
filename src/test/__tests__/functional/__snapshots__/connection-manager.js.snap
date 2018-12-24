@@ -12,3 +12,18 @@ exports[`connectReader connects to a Reader and updates state 2`] = `
   not_connected
 </div>
 `;
+
+exports[`connectReader throws exception from onFetchConnectionToken and updates error state 1`] = `
+<div>
+  disconnected
+  SIMULATED
+  Test Error
+</div>
+`;
+
+exports[`connectReader throws exception from onFetchConnectionToken and updates error state 2`] = `
+<div>
+  not_connected
+  Test Error
+</div>
+`;
