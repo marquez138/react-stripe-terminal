@@ -1,4 +1,5 @@
-class ConnectionManager {
+import AbstractReaderController from './abstract-reader-controller';
+class ConnectionManager extends AbstractReaderController {
     static CONNECTION_STATE = {
         DISCONNECTED: 'disconnected',
         NETWORK_ERROR: 'network_error',
@@ -6,10 +7,6 @@ class ConnectionManager {
         CONNECTING: 'connecting',
         NOT_CONNECTED: 'not_connected',
     };
-    constructor({ terminal, component }) {
-        this._terminal = terminal;
-        this._component = component;
-    }
     set terminal(term) {
         this._terminal = term;
     }

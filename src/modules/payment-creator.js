@@ -1,13 +1,9 @@
 import ConnectionManager from './connection-manager';
-class PaymentCreator {
+import AbstractReaderController from './abstract-reader-controller';
+class PaymentCreator extends AbstractReaderController {
     static PAYMENT_STATUS = {
         COLLECTING_PAYMENT_METHOD: 'collecting_payment_method',
     };
-
-    constructor({ component, terminal }) {
-        this._component = component;
-        this._terminal = terminal;
-    }
     set terminal(stripeTerminal) {
         this._terminal = stripeTerminal;
     }

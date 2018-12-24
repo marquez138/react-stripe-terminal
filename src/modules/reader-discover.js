@@ -1,8 +1,5 @@
-class ReaderDiscover {
-    constructor({ terminal, component }) {
-        this._terminal = terminal;
-        this._component = component;
-    }
+import AbstractReaderController from './abstract-reader-controller'
+class ReaderDiscover extends AbstractReaderController {
     async discoverReaders({ discoveryOptions }) {
         const {
             discoveredReaders,
