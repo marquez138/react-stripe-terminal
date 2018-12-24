@@ -4,43 +4,40 @@ import { injectStripeTerminal } from 'react-stripe-terminal';
 
 class POSApp extends Component {
     renderConnectionDialog(useSimulator) {
+        const { stripeTerminal } = this.props;
         return (
             <div>
                 <div className="row">
                     <h2>Connect to a Device</h2>
-                    {this.props.stripeTerminal.discovery.discoveredReaders.map(
-                        reader => (
-                            <div className="row box" key={reader.id}>
-                                <div className="col s8 reader-name">
-                                    <strong>{reader.label}</strong>
-                                    <p>{reader.ip_address}</p>
-                                    <p>
-                                        Device: {reader.device_type}{' '}
-                                        <i>({reader.status})</i>
-                                    </p>
-                                    <p>Device ID: {reader.id}</p>
-                                    <p>Serial#: {reader.serial_number}</p>
-                                </div>
-                                <div className="col s4">
-                                    <button
-                                        className="btn right"
-                                        onClick={() =>
-                                            this.props.stripeTerminal.connectReader(
-                                                reader
-                                            )
-                                        }
-                                    >
-                                        Connect
-                                    </button>
-                                </div>
+                    {stripeTerminal.discovery.discoveredReaders.map(reader => (
+                        <div className="row box" key={reader.id}>
+                            <div className="col s8 reader-name">
+                                <strong>{reader.label}</strong>
+                                <p>{reader.ip_address}</p>
+                                <p>
+                                    Device: {reader.device_type}{' '}
+                                    <i>({reader.status})</i>
+                                </p>
+                                <p>Device ID: {reader.id}</p>
+                                <p>Serial#: {reader.serial_number}</p>
                             </div>
-                        )
-                    )}
+                            <div className="col s4">
+                                <button
+                                    className="btn right"
+                                    onClick={() =>
+                                        stripeTerminal.connectReader(reader)
+                                    }
+                                >
+                                    Connect
+                                </button>
+                            </div>
+                        </div>
+                    ))}
                     <div className="row center">
                         <button
                             className="btn green"
                             onClick={() =>
-                                this.props.stripeTerminal.discoverReaders({
+                                stripeTerminal.discoverReaders({
                                     method: useSimulator ? 'simulated' : null,
                                 })
                             }
@@ -59,7 +56,7 @@ class POSApp extends Component {
                 <button
                     className="btn"
                     onClick={() =>
-                        this.props.stripeTerminal.onRegisterReader(
+                        stripeTerminal.onRegisterReader(
                             this.state.registrationToken
                         )
                     }
@@ -72,10 +69,11 @@ class POSApp extends Component {
     }
 
     renderBasketItems() {
+        const { stripeTerminal } = this.props;
         return (
             <div className="row item-list">
-                {this.props.stripeTerminal.payment.lineItems.length ? (
-                    this.props.stripeTerminal.payment.lineItems.map(item => (
+                {stripeTerminal.payment.lineItems.length ? (
+                    stripeTerminal.payment.lineItems.map(item => (
                         <div
                             className="list-item"
                             key={`stripe-pos-item-${item.id}`}
@@ -101,14 +99,12 @@ class POSApp extends Component {
                                 <div className="col s4">
                                     <button
                                         disabled={
-                                            this.props.stripeTerminal.connection
-                                                .status !== 'connected'
+                                            stripeTerminal.connection.status !==
+                                            'connected'
                                         }
                                         className="btn red right"
                                         onClick={() =>
-                                            this.props.stripeTerminal.removeLineItem(
-                                                item
-                                            )
+                                            stripeTerminal.removeLineItem(item)
                                         }
                                     >
                                         Remove
@@ -125,19 +121,21 @@ class POSApp extends Component {
     }
 
     renderError() {
-        if (!this.props.stripeTerminal.error) {
+        const { stripeTerminal } = this.props;
+        if (!stripeTerminal.error) {
             return;
         }
         return (
             <div className="error-box">
-                <p>{this.props.stripeTerminal.error.message}</p>
+                <p>{stripeTerminal.error.message}</p>
             </div>
         );
     }
 
     render() {
+        const { stripeTerminal } = this.props;
         let component;
-        if (this.props.stripeTerminal.connection.status === 'connected') {
+        if (stripeTerminal.connection.status === 'connected') {
             component = (
                 <div>
                     <h1>Checkout Basket</h1>
@@ -147,21 +145,17 @@ class POSApp extends Component {
                             <p>
                                 Subtotal: $
                                 {(
-                                    this.props.stripeTerminal.payment.subtotal /
-                                    100
+                                    stripeTerminal.payment.subtotal / 100
                                 ).toFixed(2)}
                             </p>
                             <p>
                                 Tax: $
-                                {(
-                                    this.props.stripeTerminal.payment.tax / 100
-                                ).toFixed(2)}
+                                {(stripeTerminal.payment.tax / 100).toFixed(2)}
                             </p>
                             <p>
                                 Total: $
                                 {(
-                                    this.props.stripeTerminal.payment
-                                        .balanceDue / 100
+                                    stripeTerminal.payment.balanceDue / 100
                                 ).toFixed(2)}
                             </p>
                         </div>
@@ -169,12 +163,12 @@ class POSApp extends Component {
                             <div className="row">
                                 <button
                                     disabled={
-                                        this.props.stripeTerminal.connection
-                                            .status !== 'connected'
+                                        stripeTerminal.connection.status !==
+                                        'connected'
                                     }
                                     className="btn green"
                                     onClick={() =>
-                                        this.props.stripeTerminal.addLineItem({
+                                        stripeTerminal.addLineItem({
                                             id: new UUID(4).toString(),
                                             description: 'Silver Hat',
                                             amount: 2000,
@@ -188,25 +182,31 @@ class POSApp extends Component {
                             <div className="row">
                                 <button
                                     disabled={
-                                        this.props.stripeTerminal
-                                            .connectionStatus !== 'connected'
+                                        stripeTerminal.connection.status !==
+                                            'connected' ||
+                                        stripeTerminal.payment.status !==
+                                            'ready'
                                     }
-                                    onClick={() =>
-                                        this.props.stripeTerminal.createPayment(
-                                            {
-                                                amount: this.props
-                                                    .stripeTerminal.payment
-                                                    .balanceDue,
+                                    onClick={async () => {
+                                        console.log('createPayment');
+                                        await stripeTerminal.createPayment({
+                                            paymentIntentOptions: {
+                                                amount:
+                                                    stripeTerminal.payment
+                                                        .balanceDue,
                                                 description: 'Purchase',
-                                            }
-                                        )
-                                    }
+                                            },
+                                        });
+                                        setTimeout(() => {
+                                            // Transaction compelted - clear reader and cart for next purhcase
+                                            stripeTerminal.clearPayment();
+                                        }, 2000);
+                                    }}
                                     className="btn"
                                 >
                                     Create $
                                     {(
-                                        this.props.stripeTerminal.payment
-                                            .balanceDue / 100
+                                        stripeTerminal.payment.balanceDue / 100
                                     ).toFixed(2)}{' '}
                                     Charge
                                 </button>
@@ -218,23 +218,22 @@ class POSApp extends Component {
                         <div className="col s8">
                             <h3>
                                 Device Status:{' '}
-                                {this.props.stripeTerminal.connection.status}
+                                {stripeTerminal.connection.status}
                             </h3>
-                            {this.props.stripeTerminal.connection.status ===
-                                'connected' &&
-                            this.props.stripeTerminal.payment.status ? (
+                            {stripeTerminal.connection.status === 'connected' &&
+                            stripeTerminal.payment.status ? (
                                 <h3>
                                     Payment Status:{' '}
-                                    {this.props.stripeTerminal.payment.status}
+                                    {stripeTerminal.payment.status}
                                 </h3>
                             ) : null}
                         </div>
                         <div className="col s4">
                             <button
-                                disabled={!this.props.stripeTerminal.connection}
+                                disabled={!stripeTerminal.connection}
                                 className="btn red right"
                                 onClick={() =>
-                                    this.props.stripeTerminal.disconnectReader()
+                                    stripeTerminal.disconnectReader()
                                 }
                             >
                                 Disconnect
@@ -243,7 +242,7 @@ class POSApp extends Component {
                     </div>
                 </div>
             );
-        } else if (this.props.stripeTerminal.connection.connecting) {
+        } else if (stripeTerminal.connection.connecting) {
             // TODO show a (real) pre-loader
             component = (
                 <div>
