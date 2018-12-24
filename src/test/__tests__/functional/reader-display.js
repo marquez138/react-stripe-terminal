@@ -35,7 +35,7 @@ class LineItemComponent extends TestComponent {
         );
     }
 }
-describe('lineItems', () => {
+describe('reader-display', () => {
     it('adds line items to display and computes total and tax', async () => {
         const TestApp = injectStripeTerminal(LineItemComponent);
         let stripeTerminal;

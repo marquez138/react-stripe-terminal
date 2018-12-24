@@ -56,6 +56,7 @@ export class StripeTerminalProvider extends Component {
             subtotal: 0,
             tax: 0,
             balanceDue: 0,
+            status: 'ready',
         },
     };
 

@@ -167,6 +167,7 @@ class ReaderDisplay extends AbstractReaderController {
             // if we aren't connected do not touch the basket
             return;
         }
+        await this._terminal.clearReaderDisplay();
         this._component.setState({
             payment: {
                 lineItems: [],
@@ -177,9 +178,9 @@ class ReaderDisplay extends AbstractReaderController {
                 error: null,
                 paymentIntent: null,
                 paymentMethod: null,
+                subtotal: 0,
             },
         });
-        await this._terminal.clearReaderDisplay();
     }
 }
 

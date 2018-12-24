@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`lineItems adds line items to display and computes total and tax 1`] = `
+exports[`reader-display adds line items to display and computes total and tax 1`] = `
 <div>
   <p>
     Basket Items
@@ -68,7 +68,7 @@ exports[`lineItems adds line items to display and computes total and tax 1`] = `
 </div>
 `;
 
-exports[`lineItems clears payment state and reader screen 1`] = `
+exports[`reader-display clears payment state and reader screen 1`] = `
 <div>
   <p>
     Basket Items
@@ -136,13 +136,14 @@ exports[`lineItems clears payment state and reader screen 1`] = `
 </div>
 `;
 
-exports[`lineItems clears payment state and reader screen 2`] = `
+exports[`reader-display clears payment state and reader screen 2`] = `
 <div>
   <p>
     Basket Items
   </p>
   <p>
     Subtotal: 
+    0
   </p>
   <p>
     Tax: 
@@ -155,7 +156,7 @@ exports[`lineItems clears payment state and reader screen 2`] = `
 </div>
 `;
 
-exports[`lineItems computes custom total and tax for line items 1`] = `
+exports[`reader-display computes custom total and tax for line items 1`] = `
 <div>
   <p>
     Basket Items
@@ -223,13 +224,14 @@ exports[`lineItems computes custom total and tax for line items 1`] = `
 </div>
 `;
 
-exports[`lineItems computes custom total and tax for line items 2`] = `
+exports[`reader-display computes custom total and tax for line items 2`] = `
 <div>
   <p>
     Basket Items
   </p>
   <p>
     Subtotal: 
+    0
   </p>
   <p>
     Tax: 
@@ -242,7 +244,7 @@ exports[`lineItems computes custom total and tax for line items 2`] = `
 </div>
 `;
 
-exports[`lineItems removeLineItems decrements quantity from display and state computes total and tax 1`] = `
+exports[`reader-display removeLineItems decrements quantity from display and state computes total and tax 1`] = `
 <div>
   <p>
     Basket Items
@@ -310,7 +312,7 @@ exports[`lineItems removeLineItems decrements quantity from display and state co
 </div>
 `;
 
-exports[`lineItems removeLineItems decrements quantity from display and state computes total and tax 2`] = `
+exports[`reader-display removeLineItems decrements quantity from display and state computes total and tax 2`] = `
 <div>
   <p>
     Basket Items
@@ -378,7 +380,7 @@ exports[`lineItems removeLineItems decrements quantity from display and state co
 </div>
 `;
 
-exports[`lineItems removeLineItems decrements quantity from display and state computes total and tax 3`] = `
+exports[`reader-display removeLineItems decrements quantity from display and state computes total and tax 3`] = `
 <div>
   <p>
     Basket Items
@@ -446,7 +448,7 @@ exports[`lineItems removeLineItems decrements quantity from display and state co
 </div>
 `;
 
-exports[`lineItems removeLineItems decrements quantity from display and state computes total and tax 4`] = `
+exports[`reader-display removeLineItems decrements quantity from display and state computes total and tax 4`] = `
 <div>
   <p>
     Basket Items
@@ -514,7 +516,7 @@ exports[`lineItems removeLineItems decrements quantity from display and state co
 </div>
 `;
 
-exports[`lineItems removeLineItems removes items from display and state computes total and tax 1`] = `
+exports[`reader-display removeLineItems removes items from display and state computes total and tax 1`] = `
 <div>
   <p>
     Basket Items
@@ -582,7 +584,7 @@ exports[`lineItems removeLineItems removes items from display and state computes
 </div>
 `;
 
-exports[`lineItems removeLineItems removes items from display and state computes total and tax 2`] = `
+exports[`reader-display removeLineItems removes items from display and state computes total and tax 2`] = `
 <div>
   <p>
     Basket Items
@@ -634,7 +636,7 @@ exports[`lineItems removeLineItems removes items from display and state computes
 </div>
 `;
 
-exports[`lineItems removeLineItems removes items from display and state computes total and tax 3`] = `
+exports[`reader-display removeLineItems removes items from display and state computes total and tax 3`] = `
 <div>
   <p>
     Basket Items
@@ -670,7 +672,7 @@ exports[`lineItems removeLineItems removes items from display and state computes
 </div>
 `;
 
-exports[`lineItems removeLineItems removes items from display and state computes total and tax 4`] = `
+exports[`reader-display removeLineItems removes items from display and state computes total and tax 4`] = `
 <div>
   <p>
     Basket Items
