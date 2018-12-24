@@ -7,7 +7,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/a1ebfcaa38c8bc476d09/maintainability)](https://codeclimate.com/github/sedouard/react-stripe-terminal/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a1ebfcaa38c8bc476d09/test_coverage)](https://codeclimate.com/github/sedouard/react-stripe-terminal/test_coverage)
 
-`react-stripe-terminal` manages synchronization of the Stripe Terminal POS device state and react component state. This allows you to easily write React applications with to Stripe Terminal by using the `stripeTerminal.*` methods and rendering the `stripeTerminal` provided props.
+`react-stripe-terminal` manages synchronization of the Stripe Terminal POS device state and react component state. This allows you to easily write React applications with [Stripe Terminal](https://stripe.com/docs/terminal) by using the `stripeTerminal.*` methods and rendering the `stripeTerminal.payment`, `stripeTerminal.connection` and `stripeTerminal.discovery` provided props.
 
 **Note:** This library isn't officially supported by Stripe.
 
@@ -19,7 +19,7 @@ npm install --save react-stripe-terminal
 
 ## Usage
 
-Create a `StripeTerminalProvider` component at the highest level of your react hierarchy where your application interfaces with Stripe Terminal. Use `injectStripeTerminal` to inject the `stripeTerminal` propery into your component's `props`.
+Create a `StripeTerminalProvider` component at the top-most level of your react component hierarchy where your application needs to interface with Stripe Terminal. Use `injectStripeTerminal` to inject the `stripeTerminal` propery into your component's `props`.
 
 ```jsx
 import React, { Component } from 'react';
@@ -37,12 +37,15 @@ class POSComponent extends Component {
         );
     }
 }
-
+const MyPOSComponent = injectStripeTerminal(MyPOSComponent);
 class App extends Component {
     render() {
-        const MyPOSComponent = injectStripeTerminal(MyPOSComponent);
         return (
-            <StripeTerminalProvider>
+            <StripeTerminalProvider
+                onFetchConnectionToken={handleFetchConnectionToken}
+                onPaymentIntentRequest={handlePaymentIntentRequest}
+                taxRate={0.10}
+            >
                 <MyPOSComponent />
             </StripeTerminalProvider>
         );
@@ -50,7 +53,7 @@ class App extends Component {
 }
 ```
 
-In the above example `POSComponent` is the original point-of-sale component. `injectStripeTerminal` returns a wrapped version of the component and when rendered will have the `stripeTerminal` property available for rendering and calling functions upon.
+In the example above, `POSComponent` is the original point-of-sale component. `injectStripeTerminal` returns a wrapped version of the component (`MyPOSComponent`) and when rendered will have the `stripeTerminal` property available for rendering and calling functions upon.
 
 ### The stripeTerminal prop
 
@@ -90,10 +93,9 @@ Below is a sample connection dialog component
 import React, { Component } from 'react';
 import { StripeTerminalProvider, injectStripeTerminal } from 'react-stripe-terminal';
 
-
-
 class App extends Component {
     render() {
+        const { stripeTerminal } = this.props;
         return (
             <div
                 className="StripePOS"
@@ -112,7 +114,7 @@ class App extends Component {
                 >
                     {injectStripeTerminal(
                         <div>Readers</div>
-                        {this.props.stripeTerminal.discovery.discoveredReaders.map(
+                        {stripeTerminal.discovery.discoveredReaders.map(
                             reader => (
                                 <div key={reader.id}>
                                     <strong>{reader.label}</strong>
@@ -123,11 +125,12 @@ class App extends Component {
                                     </p>
                                     <p>Device ID: {reader.id}</p>
                                     <p>Serial#: {reader.serial_number}</p>
-                                    <button onClick={() => this.props.stripeTerminal.connectReader}>Connect</button>
+                                    <button onClick={() =>                              stripeTerminal.connectReader()
+                                    }>Connect</button>
                                 <div>
                                 <div>
-                                    {this.props.stripeTerminal.error ?
-                                        this.props.stripeTerminal.message : null}
+                                    {stripeTerminal.error ?
+                                        stripeTerminal.error.message : null}
                                 </div>
                             )
                         )}
@@ -142,11 +145,11 @@ class App extends Component {
 export default App;
 ```
 
-Binding to these properties can allow you to render a full POS application with minimal logic
+Binding to these properties can allow you to render a full POS application with mostly jsx and minimal application logic.
 
 ### Example: Checkout Basket
 
-In your `MyPOSComponent` component, wrap it with the `POSDevice` react high-order-component (HOC):
+After successful connection to a reader, you can render a checkout dialog. The `CheckoutComponent` example below has been rendered with the `stripeTerminal` prop:
 
 ```jsx
 class CheckoutComponent extends Component {
@@ -177,10 +180,9 @@ class CheckoutComponent extends Component {
                             }
                             className="btn"
                             onClick={() =>
-                                stripeTerminal.addBasketItem({
+                                stripeTerminal.addLineItem({
                                     description: 'Silver Hat',
-                                    totalPrice: 20.0,
-                                    unitPrice: 10.0,
+                                    amount: 2000,
                                     quantity: 2,
                                 })
                             }
@@ -191,14 +193,15 @@ class CheckoutComponent extends Component {
                     <div className="col s6">
                         <button
                             disabled={
-                                stripeTerminal.connectionStatus !== 'connected'
+                                stripeTerminal.connection.status !== 'connected'
                             }
                             className="btn"
                         >
-                            Create ${stripeTerminal.totals.balanceDue} Charge
+                            Create ${stripeTerminal.payment.balanceDue} Charge
                         </button>
                     </div>
-                    <h3>Device Status: {stripeTerminal.connectionStatus}</h3>
+                    <h3>Device Status: {stripeTerminal.connection.status}</h3>
+                    <h3>Payment Status: {stripeTerminal.payment.status}</h3>
                 </div>
             </div>
         );
@@ -212,16 +215,16 @@ export default injectStripeTerminal(POSPayment);
 
 ## StripeTerminalProvider
 
-The StripeTerminalProvider is a react provider which can inject the `stripeTerminal` property into any child component.
+The StripeTerminalProvider is a [react context provider](https://reactjs.org/docs/context.html#contextprovider) which can inject the `stripeTerminal` property into any child component of `StripeTerminalProvider`.
 
 | Input                       | Type                          | Description                                                                                                                   |
 | --------------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| onFetchConnectionToken()    | **required** function         | Corresponds to [onFetchConnectionToken](https://stripe.com/docs/terminal/js/reference#stripeterminal-create)                  |
-| onPaymentIntentRequest()    | **required** function         | Returns Promise which resolves with Payment Intent secret in the `requires_source` state.                                     |
-| computeTaxAmount(lineItems) | **optional** function         | Given the `lineItems` array returns the tax amount for a transaction as a `number`. Overrides the `tax` input                 |
+| onFetchConnectionToken()    | **required** function         | Corresponds to [onFetchConnectionToken](https://stripe.com/docs/terminal/js/reference#stripeterminal-create)                 handler of `StripeTerminal.create`|
+| onPaymentIntentRequest(paymentIntentOptions)    | **required** function         | Takes a `paymentIntentOptions` specified by the `paymentIntentOptions` argument you pass to `stripeTerminal.createPayment`. Returns Promise which resolves with [Payment Intent](https://stripe.com/docs/api/payment_intents/object) secret in the `requires_source` state.                                     |
+| computeTaxAmount(lineItems) | **optional** function         | Given the `stripeTerminal.payment.lineItems` array returns the tax amount for a transaction as a `number`. Overrides the `taxRate` input                 |
 | computeSubtotal(lineItems)  | **optional** function         | Given the `lineItems` array return the subtotal amount for a transaction and overrides default behavior of sum of line items. |
-| taxRate                     | **optional** number           | The tax rate as a decimal to apply to the transaction                                                                         |
-| lineItems                   | **optional** Array<LineItems> | Array of LineItems to render the reader display initially. Will be copied over to stripeTerminal.payment.lineItems            |
+| taxRate                     | **optional** number           | The tax rate as a decimal to apply to the transaction. This will be applied to `stripeTerminal.payment.subtotal`                                                                         |
+| lineItems                   | **optional** Array<LineItems> | Array of LineItems to render the reader display initially. Will be copied over to stripeTerminal.payment.lineItems. See the [Line Items](#line-items) section for more details            |
 
 ## stripeTerminal
 
