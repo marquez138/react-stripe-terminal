@@ -2,7 +2,7 @@
 
 > React bindings for Stripe WebPOS SDK
 
-[![NPM](https://img.shields.io/npm/v/react-stripe-pos.svg)](https://www.npmjs.com/package/react-stripe-pos) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/react-stripe-terminal.svg)](https://www.npmjs.com/package/react-stripe-pos) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![Build Status](https://travis-ci.org/sedouard/react-stripe-terminal.svg?branch=master)](https://travis-ci.org/sedouard/react-stripe-terminal)
 [![Maintainability](https://api.codeclimate.com/v1/badges/a1ebfcaa38c8bc476d09/maintainability)](https://codeclimate.com/github/sedouard/react-stripe-terminal/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a1ebfcaa38c8bc476d09/test_coverage)](https://codeclimate.com/github/sedouard/react-stripe-terminal/test_coverage)
