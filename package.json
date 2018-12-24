@@ -1,6 +1,6 @@
 {
     "name": "react-stripe-terminal",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "React bindings for Stripe WebPOS SDK",
     "author": "sedouard",
     "license": "MIT",
@@ -22,6 +22,11 @@
         "predeploy": "cd example && yarn install && yarn run build",
         "deploy": "gh-pages -d example/build"
     },
+    "keywords": [
+        "stripe",
+        "stripe-terminal",
+        "react"
+    ],
     "peerDependencies": {
         "prop-types": "^15.5.4",
         "react": "^15.0.0 || ^16.0.0",
