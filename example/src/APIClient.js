@@ -1,42 +1,57 @@
-const API_BASE = 'https://pos-backend-dot-stripe-terminal-js-demo.appspot.com/';
+const API_BASE = 'https://api.stripe.com/';
+const TEST_API_KEY = 'sk_test_HmLHFo4M0h4eEYDVrzAV7axx';
 
-async function createPosActivationToken(posDeviceId) {
-    const formData = new URLSearchParams();
-    formData.append('pos_device_id', posDeviceId);
-
-    let res = await fetch(API_BASE + 'pos_activation_token', {
+/**
+ * NOTE: For the purposes of the example we are running these privledged API
+ * requests from the client. In a real-world deployment you MUST make these
+ * reqeuests from your backend.
+ * @param {String} posDeviceId
+ */
+async function createPosActivationToken() {
+    const res = await fetch(`${API_BASE}/v1/terminal/connection_tokens`, {
         method: 'post',
-        body: formData,
+        headers: {
+            Authorization: `Bearer ${TEST_API_KEY}`,
+        },
     });
     if (!res.ok) {
         throw new Error('Failed to get Activation Token.');
     }
-    let json = await res.json();
-    return json.activation_token;
+    const connection_token = await res.json();
+    return connection_token.secret;
 }
 
 async function registerDevice(pairingCode) {
     const formData = new URLSearchParams();
-    formData.append('pairing_code', pairingCode);
+    formData.append('registration_code', pairingCode);
 
-    let res = await fetch(API_BASE + 'pos_register', {
+    const res = await fetch(`${API_BASE}/v1/terminal/readers`, {
         method: 'post',
         body: formData,
+        headers: {
+            Authorization: `Bearer ${TEST_API_KEY}`,
+        },
     });
     if (!res.ok) {
-        throw new Error('Failed to get PaymentIntent.');
+        throw new Error('Failed to register reder.');
     }
     let json = await res.json();
-    return json.client_secret;
+    return json;
 }
 
-async function createIntent(amount, description) {
+async function createIntent({ amount, description, currency = 'usd' }) {
     const formData = new URLSearchParams();
     formData.append('amount', amount);
     formData.append('description', description);
-    let res = await fetch(API_BASE + 'create_payment_intent', {
+    formData.append('currency', currency);
+    formData.append('allowed_source_types[]', 'card_present');
+    formData.append('capture_method', 'manual');
+    let res = await fetch(`${API_BASE}/v1/payment_intents`, {
         method: 'post',
         body: formData,
+        headers: {
+            Authorization: `Bearer ${TEST_API_KEY}`,
+        },
     });
     if (!res.ok) {
         throw new Error('Failed to get PaymentIntent.');
