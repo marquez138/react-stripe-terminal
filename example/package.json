@@ -1,5 +1,5 @@
 {
-    "name": "react-stripe-pos-example",
+    "name": "react-stripe-terminal-example",
     "homepage": "https://sedouard.github.io/react-stripe-pos",
     "version": "0.0.0",
     "license": "MIT",
@@ -32,6 +32,8 @@
         "build-js": "node_modules/react-scripts/bin/react-scripts.js build",
         "build": "node_modules/npm-run-all/bin/npm-run-all/index.js build-css build-js",
         "test": "react-scripts test --env=jsdom",
-        "eject": "node_modules/react-scripts/bin/react-scripts.js eject"
+        "eject": "node_modules/react-scripts/bin/react-scripts.js eject",
+        "predeploy": "yarn run build",
+        "deploy": "gh-pages -d build"
     }
 }
